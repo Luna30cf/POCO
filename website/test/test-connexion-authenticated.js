@@ -9,9 +9,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 async function testAuthenticatedUser() {
     const { data: authData, error: authError } =
         await supabase.auth.signInWithPassword({
-            email: process.env.TEST_USER2_EMAIL,
-            password: process.env.TEST_USER2_PASSWORD,
+            email: process.env.TEST_USER1_EMAIL,
+            password: process.env.TEST_USER1_PASSWORD,
         });
+        console.log("ACCESS_TOKEN=" + authData.session.access_token);
 
     if (authError) {
         console.error("Erreur connexion utilisateur :", authError.message);

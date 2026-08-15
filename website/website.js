@@ -1,13 +1,16 @@
 const express = require("express");
-const path = require("path");
+require("dotenv").config();
+
+const websiteRoutes = require("./routes/website.routes");
+const potsRoutes = require("./routes/pots.routes");
 
 const app = express();
 
-// Permet de servir CSS / JS / images
-app.use(express.static(path.join(__dirname, "assets")));
+app.use(express.json());
 
-// Routes
-const websiteRoutes = require("./routes/website.routes");
+app.use(express.static("assets"));
+
 app.use("/", websiteRoutes);
+app.use("/api/pots", potsRoutes);
 
 module.exports = app;
