@@ -1,6 +1,6 @@
 const express = require("express");
 const { getPots } = require("../controller/pots.controller");
-const { authenticateUser } = require("../middleware/auth.middleware");
+const { authenticateUser } = require("../middlewares/auth.middleware");
 
 const router = express.Router();
 
