@@ -64,8 +64,62 @@ async function getLatestMeasurement(supabase, potId) {
   return data;
 }
 
+async function createMeasurementSnapshot(deviceId, values) {
+  const pot = await getPotByDeviceId(deviceId);
+
+  // Dernière situation connue du pot
+  const { data: previousMeasurement, error: previousError } =
+    await supabaseAdmin
+      .from("measurements")
+      .select("soil_moisture, light_lux, water_level")
+      .eq("pot_id", pot.id)
+      .order("measured_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+  if (previousError) {
+    throw new Error(
+      `Impossible de récupérer la dernière mesure : ${previousError.message}`
+    );
+  }
+
+  const measurement = {
+    pot_id: pot.id,
+
+    soil_moisture:
+      values.soil_moisture ??
+      previousMeasurement?.soil_moisture ??
+      null,
+
+    light_lux:
+      values.light_lux ??
+      previousMeasurement?.light_lux ??
+      null,
+
+    water_level:
+      values.water_level ??
+      previousMeasurement?.water_level ??
+      null,
+  };
+
+  const { data, error } = await supabaseAdmin
+    .from("measurements")
+    .insert(measurement)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(
+      `Impossible d'enregistrer la mesure : ${error.message}`
+    );
+  }
+
+  return data;
+}
+
 module.exports = {
   getPotByDeviceId,
   createSoilMeasurement,
+  createMeasurementSnapshot,
   getLatestMeasurement,
 };

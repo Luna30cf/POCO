@@ -68,9 +68,17 @@ async function loadDashboard() {
     const humidity = document.createElement("p");
     humidity.textContent = "Humidité : chargement...";
 
+    const light = document.createElement("p");
+    light.textContent = "Luminosité : chargement...";
+
+    const water = document.createElement("p");
+    water.textContent = "Niveau d'eau : chargement...";
+
     potElement.appendChild(title);
     potElement.appendChild(mac);
     potElement.appendChild(humidity);
+    potElement.appendChild(light);
+    potElement.appendChild(water);
 
     container.appendChild(potElement);
 
@@ -104,7 +112,15 @@ async function loadDashboard() {
       const measurement = await measurementResponse.json();
 
       humidity.textContent =
-        `Humidité : ${measurement.soil_moisture} %`;
+      `Humidité : ${measurement.soil_moisture} %`;
+
+    light.textContent =
+      `Luminosité : ${measurement.light_lux} lux`;
+
+    water.textContent =
+      measurement.water_level
+        ? "Niveau d'eau : OK"
+        : "Niveau d'eau : BAS";
 
 
     } catch (error) {
