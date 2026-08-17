@@ -2,6 +2,7 @@ from machine import ADC, Pin, I2C
 from time import sleep
 from wifi import connect_wifi
 from umqtt.simple import MQTTClient
+from config import PUMP_PIN, PUMP_DURATION
 import json
 import machine
 
@@ -13,6 +14,7 @@ BH1750_ADDR = 0x23
 BH1750_MODE = 0x10
 
 MEASUREMENT_INTERVAL = 10
+
 
 soil = ADC(Pin(34))
 
@@ -46,6 +48,12 @@ client = MQTTClient(
     server="broker.emqx.io",
     port=1883
 )
+
+PUMP_TOPIC = f"poco/{device_id}/pump".encode()
+print("Topic pompe :", PUMP_TOPIC)
+pump = Pin(PUMP_PIN, Pin.OUT)
+pump.value(0)
+
 
 TOPIC_SOIL = f"poco/{device_id}/soil_sensor".encode()
 TOPIC_LIGHT = f"poco/{device_id}/light_sensor".encode()
@@ -104,6 +112,40 @@ def read_light():
 def read_float():
     return float_sensor.value()
 
+def on_mqtt_message(topic, message):
+    print("Commande MQTT reçue")
+    print("Topic :", topic)
+    print("Message :", message)
+
+    if topic != PUMP_TOPIC:
+        return
+
+    try:
+        data = json.loads(message.decode())
+    except Exception as error:
+        print("Commande JSON invalide :", error)
+        return
+
+    if data.get("action") != "water":
+        print("Commande pompe inconnue")
+        return
+
+    print("Arrosage demandé")
+
+    try:
+        pump.value(1)
+        print("Pompe ON")
+
+        sleep(PUMP_DURATION)
+
+    finally:
+        pump.value(0)
+        print("Pompe OFF")
+
+client.set_callback(on_mqtt_message)
+client.subscribe(PUMP_TOPIC)
+
+print("Abonné au topic pompe :", PUMP_TOPIC)
 
 while True:
 
@@ -184,7 +226,16 @@ while True:
             "Erreur flotteur :",
             error
         )
+    client.check_msg()
 
     print("--------------------")
 
-    sleep(MEASUREMENT_INTERVAL)
+    
+
+    for _ in range(MEASUREMENT_INTERVAL * 10):
+        try:
+            client.check_msg()
+        except Exception as error:
+            print("Erreur MQTT :", error)
+
+        sleep(0.1)

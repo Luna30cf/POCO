@@ -43,6 +43,10 @@ async function loadDashboard() {
   }
 
   for (const pot of pots) {
+
+    const waterButton = document.createElement("button");
+    waterButton.textContent = "Arroser";
+
     const potElement = document.createElement("div");
 
     const title = document.createElement("h3");
@@ -65,6 +69,7 @@ async function loadDashboard() {
     potElement.appendChild(humidity);
     potElement.appendChild(light);
     potElement.appendChild(water);
+    potElement.appendChild(waterButton);
 
     container.appendChild(potElement);
 
@@ -130,6 +135,50 @@ async function loadDashboard() {
       )
       .subscribe((status) => {
         console.log(`Realtime ${pot.name} :`, status);
+      });
+
+      waterButton.addEventListener("click", async () => {
+        try {
+          waterButton.disabled = true;
+          waterButton.textContent = "Arrosage...";
+
+          const response = await fetch(
+            `/api/pots/${pot.id}/water`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${session.access_token}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+
+            console.error(
+              "Erreur commande arrosage :",
+              errorData
+            );
+
+            waterButton.textContent = "Erreur";
+            return;
+          }
+
+          waterButton.textContent = "Arrosage envoyé ✓";
+
+          setTimeout(() => {
+            waterButton.textContent = "Arroser";
+            waterButton.disabled = false;
+          }, 2000);
+
+        } catch (error) {
+          console.error(
+            "Erreur lors de l'arrosage :",
+            error
+          );
+
+          waterButton.textContent = "Erreur";
+        }
       });
   }
 }

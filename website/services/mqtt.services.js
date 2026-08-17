@@ -7,7 +7,11 @@ const {
 const brokerUrl = process.env.MQTT_BROKER;
 
 // Écoute les 3 types de capteurs POCO
-const topic = "poco/+/+";
+const topics = [
+  "poco/+/soil_sensor",
+  "poco/+/light_sensor",
+  "poco/+/float_sensor",
+];
 
 const ALLOWED_SENSORS = [
   "soil_sensor",
@@ -168,15 +172,18 @@ async function processMqttMessage(receivedTopic, message) {
   });
 }
 
+let mqttClient = null;
 
 function startMqttClient() {
-  const client = mqtt.connect(brokerUrl);
+  mqttClient = mqtt.connect(brokerUrl);
+
+  const client = mqttClient;
 
 
   client.on("connect", () => {
     console.log("MQTT : connecté au broker");
 
-    client.subscribe(topic, (error) => {
+    client.subscribe(topics, (error) => {
       if (error) {
         console.error(
           "MQTT : erreur abonnement :",
@@ -186,8 +193,8 @@ function startMqttClient() {
       }
 
       console.log(
-        "MQTT : abonné au topic",
-        topic
+        "MQTT : abonné aux topics capteurs",
+        topics
       );
     });
   });
@@ -237,7 +244,41 @@ function startMqttClient() {
   return client;
 }
 
+function publishMqttMessage(topic, payload) {
+  return new Promise((resolve, reject) => {
+
+    if (!mqttClient || !mqttClient.connected) {
+      return reject(
+        new Error("Client MQTT non connecté")
+      );
+    }
+
+    const message = JSON.stringify(payload);
+
+    mqttClient.publish(
+      topic,
+      message,
+      { qos: 0 },
+      (error) => {
+
+        if (error) {
+          return reject(error);
+        }
+
+        console.log(
+          "MQTT : commande publiée",
+          topic,
+          message
+        );
+
+        resolve();
+      }
+    );
+  });
+}
+
 
 module.exports = {
   startMqttClient,
+  publishMqttMessage,
 };
