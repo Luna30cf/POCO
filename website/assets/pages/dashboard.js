@@ -52,6 +52,12 @@ async function loadDashboard() {
     const title = document.createElement("h3");
     title.textContent = pot.name;
 
+    const plantName = document.createElement("p");
+    plantName.textContent = "Plante : chargement...";
+
+    const speciesName = document.createElement("p");
+    speciesName.textContent = "Espèce : chargement...";
+
     const mac = document.createElement("p");
     mac.textContent = "Adresse MAC : " + pot.mac_address;
 
@@ -65,6 +71,8 @@ async function loadDashboard() {
     water.textContent = "Niveau d'eau : chargement...";
 
     potElement.appendChild(title);
+    potElement.appendChild(plantName);
+    potElement.appendChild(speciesName);
     potElement.appendChild(mac);
     potElement.appendChild(humidity);
     potElement.appendChild(light);
@@ -72,6 +80,48 @@ async function loadDashboard() {
     potElement.appendChild(waterButton);
 
     container.appendChild(potElement);
+
+    try {
+      const plantResponse = await fetch(
+        `/api/pots/${pot.id}/plant`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      if (plantResponse.status === 404) {
+        plantName.textContent = "Aucune plante associée";
+        speciesName.textContent = "";
+      }
+
+      else if (!plantResponse.ok) {
+        plantName.textContent =
+          "Erreur lors du chargement de la plante";
+        speciesName.textContent = "";
+      }
+
+      else {
+        const plant = await plantResponse.json();
+
+        plantName.textContent =
+          `Plante : ${plant.nickname}`;
+
+        speciesName.textContent =
+          `Espèce : ${plant.species.common_name} — ${plant.species.scientific_name}`;
+      }
+
+    } catch (error) {
+      console.error(
+        "Erreur récupération plante :",
+        error
+      );
+
+      plantName.textContent =
+        "Erreur lors du chargement de la plante";
+    }
 
     // Chargement initial
     try {

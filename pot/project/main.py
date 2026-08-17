@@ -132,7 +132,19 @@ def on_mqtt_message(topic, message):
 
     print("Arrosage demandé")
 
+    # Sécurité anti-marche-à-sec
+    water_level = read_float()
+
+    if water_level == 0:
+        print("ARROSAGE BLOQUÉ")
+        print("Niveau d'eau insuffisant")
+        pump.value(0)
+        return
+
+    # Eau disponible : arrosage autorisé
     try:
+        print("Niveau d'eau suffisant")
+
         pump.value(1)
         print("Pompe ON")
 
