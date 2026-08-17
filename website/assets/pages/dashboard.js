@@ -160,7 +160,23 @@ async function loadDashboard() {
               errorData
             );
 
-            waterButton.textContent = "Erreur";
+            waterButton.textContent = "Arrosage impossible";
+
+            const errorMessage = document.createElement("p");
+            errorMessage.textContent =
+              errorData.error || "Impossible d'arroser";
+
+            errorMessage.style.color = "red";
+
+            potElement.appendChild(errorMessage);
+
+            setTimeout(() => {
+              errorMessage.remove();
+
+              waterButton.textContent = "Arroser";
+              waterButton.disabled = false;
+            }, 4000);
+
             return;
           }
 

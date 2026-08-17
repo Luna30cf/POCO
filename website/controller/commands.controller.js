@@ -12,13 +12,14 @@ async function waterPotController(req, res) {
       potId
     );
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
 
   } catch (error) {
     console.error(
       "Erreur commande arrosage :",
       error.message
     );
+
 
     if (
       error.message ===
@@ -30,7 +31,41 @@ async function waterPotController(req, res) {
       });
     }
 
-    res.status(500).json({
+
+    if (
+      error.message ===
+      "Niveau d'eau insuffisant"
+    ) {
+      return res.status(409).json({
+        error:
+          "Arrosage impossible : niveau d'eau insuffisant",
+      });
+    }
+
+
+    if (
+      error.message ===
+      "Niveau d'eau inconnu"
+    ) {
+      return res.status(409).json({
+        error:
+          "Arrosage impossible : niveau d'eau inconnu",
+      });
+    }
+
+
+    if (
+      error.message ===
+      "Impossible de vérifier le niveau d'eau"
+    ) {
+      return res.status(500).json({
+        error:
+          "Impossible de vérifier le niveau d'eau",
+      });
+    }
+
+
+    return res.status(500).json({
       error:
         "Impossible d'envoyer la commande d'arrosage",
     });

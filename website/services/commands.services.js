@@ -5,23 +5,60 @@ const {
 
 async function waterPot(supabase, potId) {
 
-  // Vérifie que le pot est bien accessible
-  // par l'utilisateur connecté grâce à la RLS
-  const { data: pot, error } = await supabase
+  // 1. Vérifie que le pot est accessible
+  // par l'utilisateur connecté via la RLS
+  const { data: pot, error: potError } = await supabase
     .from("pots")
     .select("id, name, mac_address")
     .eq("id", potId)
     .single();
 
 
-  if (error || !pot) {
+  if (potError || !pot) {
     throw new Error(
       "Pot introuvable ou accès non autorisé"
     );
   }
 
 
-  // Exemple :
+  // 2. Récupère la dernière situation connue du pot
+  const {
+    data: measurement,
+    error: measurementError,
+  } = await supabase
+    .from("measurements")
+    .select("water_level, measured_at")
+    .eq("pot_id", pot.id)
+    .order("measured_at", {
+      ascending: false,
+    })
+    .limit(1)
+    .maybeSingle();
+
+
+  if (measurementError) {
+    throw new Error(
+      "Impossible de vérifier le niveau d'eau"
+    );
+  }
+
+
+  if (!measurement) {
+    throw new Error(
+      "Niveau d'eau inconnu"
+    );
+  }
+
+
+  // 3. Sécurité anti-marche-à-sec côté backend
+  if (measurement.water_level !== true) {
+    throw new Error(
+      "Niveau d'eau insuffisant"
+    );
+  }
+
+
+  // 4. Construction du device_id
   // poco-D2A7E4 → D2A7E4
   const deviceId = pot.name.replace(
     "poco-",
@@ -38,6 +75,7 @@ async function waterPot(supabase, potId) {
   };
 
 
+  // 5. Publication uniquement si eau disponible
   await publishMqttMessage(
     topic,
     payload
