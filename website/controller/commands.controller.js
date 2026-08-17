@@ -1,5 +1,6 @@
 const {
   waterPot,
+  setLedState,
 } = require("../services/commands.services");
 
 
@@ -72,7 +73,32 @@ async function waterPotController(req, res) {
   }
 }
 
+async function setLedController(req, res) {
+  try {
+    const potId = req.params.potId;
+    const { action } = req.body;
+
+    const result = await setLedState(
+      req.supabase,
+      potId,
+      action
+    );
+
+    return res.status(200).json(result);
+
+  } catch (error) {
+    console.error(
+      "Erreur commande LED :",
+      error.message
+    );
+
+    return res.status(400).json({
+      error: error.message,
+    });
+  }
+}
 
 module.exports = {
   waterPotController,
+  setLedController,
 };

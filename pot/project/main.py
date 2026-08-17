@@ -2,7 +2,7 @@ from machine import ADC, Pin, I2C
 from time import sleep
 from wifi import connect_wifi
 from umqtt.simple import MQTTClient
-from config import PUMP_PIN, PUMP_DURATION
+from config import PUMP_PIN, PUMP_DURATION, LED_PIN
 import json
 import machine
 
@@ -15,6 +15,8 @@ BH1750_MODE = 0x10
 
 MEASUREMENT_INTERVAL = 10
 
+led = Pin(LED_PIN, Pin.OUT)
+led.value(0)
 
 soil = ADC(Pin(34))
 
@@ -48,6 +50,10 @@ client = MQTTClient(
     server="broker.emqx.io",
     port=1883
 )
+
+LED_TOPIC = f"poco/{device_id}/led".encode()
+
+print("Topic LED :", LED_TOPIC)
 
 PUMP_TOPIC = f"poco/{device_id}/pump".encode()
 print("Topic pompe :", PUMP_TOPIC)
@@ -117,45 +123,77 @@ def on_mqtt_message(topic, message):
     print("Topic :", topic)
     print("Message :", message)
 
-    if topic != PUMP_TOPIC:
-        return
-
     try:
         data = json.loads(message.decode())
     except Exception as error:
         print("Commande JSON invalide :", error)
         return
 
-    if data.get("action") != "water":
-        print("Commande pompe inconnue")
+
+    # -------------------------
+    # POMPE
+    # -------------------------
+
+    if topic == PUMP_TOPIC:
+
+        if data.get("action") != "water":
+            print("Commande pompe inconnue")
+            return
+
+        print("Arrosage demandé")
+
+        water_level = read_float()
+
+        print(
+            "Niveau d'eau avant arrosage :",
+            water_level
+        )
+
+        if water_level == 0:
+            pump.value(0)
+
+            print("ARROSAGE BLOQUÉ")
+            print("Niveau d'eau insuffisant")
+
+            return
+
+        try:
+            pump.value(1)
+            print("Pompe ON")
+
+            sleep(PUMP_DURATION)
+
+        finally:
+            pump.value(0)
+            print("Pompe OFF")
+
         return
 
-    print("Arrosage demandé")
 
-    # Sécurité anti-marche-à-sec
-    water_level = read_float()
+    # -------------------------
+    # LED
+    # -------------------------
 
-    if water_level == 0:
-        print("ARROSAGE BLOQUÉ")
-        print("Niveau d'eau insuffisant")
-        pump.value(0)
+    if topic == LED_TOPIC:
+
+        action = data.get("action")
+
+        if action == "on":
+            led.value(1)
+            print("LED ON")
+
+        elif action == "off":
+            led.value(0)
+            print("LED OFF")
+
+        else:
+            print("Commande LED inconnue")
+
         return
-
-    # Eau disponible : arrosage autorisé
-    try:
-        print("Niveau d'eau suffisant")
-
-        pump.value(1)
-        print("Pompe ON")
-
-        sleep(PUMP_DURATION)
-
-    finally:
-        pump.value(0)
-        print("Pompe OFF")
 
 client.set_callback(on_mqtt_message)
 client.subscribe(PUMP_TOPIC)
+client.subscribe(LED_TOPIC)
 
 print("Abonné au topic pompe :", PUMP_TOPIC)
 

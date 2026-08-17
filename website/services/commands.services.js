@@ -90,7 +90,54 @@ async function waterPot(supabase, potId) {
   };
 }
 
+async function setLedState(
+  supabase,
+  potId,
+  action
+) {
+  const { data: pot, error } = await supabase
+    .from("pots")
+    .select("id, name")
+    .eq("id", potId)
+    .single();
+
+  if (error || !pot) {
+    throw new Error(
+      "Pot introuvable ou accès non autorisé"
+    );
+  }
+
+  if (
+    action !== "on" &&
+    action !== "off"
+  ) {
+    throw new Error(
+      "Commande LED invalide"
+    );
+  }
+
+  const deviceId =
+    pot.name.replace("poco-", "");
+
+  const topic =
+    `poco/${deviceId}/led`;
+
+  await publishMqttMessage(
+    topic,
+    {
+      action: action,
+    }
+  );
+
+  return {
+    success: true,
+    action,
+    device_id: deviceId,
+  };
+}
+
 
 module.exports = {
   waterPot,
+  setLedState,
 };

@@ -2,6 +2,7 @@ const express = require("express");
 
 const {
   waterPotController,
+  setLedController
 } = require("../controller/commands.controller");
 
 const {
@@ -14,6 +15,12 @@ router.post(
   "/:potId/water",
   authenticateUser,
   waterPotController
+);
+
+router.post(
+  "/:potId/led",
+  authenticateUser,
+  setLedController
 );
 
 module.exports = router;
