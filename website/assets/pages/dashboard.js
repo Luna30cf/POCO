@@ -4,7 +4,6 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_X7wxQ3Rjt_hUXPU2YPkPqA_jUvBsj5x";
 
-
 const supabaseClient = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
@@ -12,316 +11,294 @@ const supabaseClient = supabase.createClient(
 
 
 // ======================================================
+// OUTILS
+// ======================================================
+
+function createElement(tag, className, text) {
+  const element = document.createElement(tag);
+
+  if (className) {
+    element.className = className;
+  }
+
+  if (text !== undefined) {
+    element.textContent = text;
+  }
+
+  return element;
+}
+
+
+// ======================================================
 // DASHBOARD
 // ======================================================
 
 async function loadDashboard() {
-
-  // --------------------------------------------------
-  // Session utilisateur
-  // --------------------------------------------------
-
   const {
     data: { session },
   } = await supabaseClient.auth.getSession();
-
 
   if (!session) {
     window.location.href = "/login";
     return;
   }
 
-
   document.getElementById("user-email").textContent =
-    "Connecté : " + session.user.email;
+    session.user.email;
 
+  const potsResponse = await fetch("/api/pots", {
+    method: "GET",
+    headers: {
+      Authorization:
+        `Bearer ${session.access_token}`,
+    },
+  });
 
-  // --------------------------------------------------
-  // Récupération des pots
-  // --------------------------------------------------
-
-  const potsResponse = await fetch(
-    "/api/pots",
-    {
-      method: "GET",
-      headers: {
-        Authorization:
-          `Bearer ${session.access_token}`,
-      },
-    }
-  );
-
+  const container =
+    document.getElementById("pots-container");
 
   if (!potsResponse.ok) {
-    document.getElementById(
-      "pots-container"
-    ).textContent =
+    container.textContent =
       "Erreur lors du chargement des pots.";
-
     return;
   }
 
-
   const pots = await potsResponse.json();
 
-  const container =
-    document.getElementById(
-      "pots-container"
-    );
-
   container.innerHTML = "";
-
 
   if (pots.length === 0) {
     container.textContent =
       "Aucun pot associé à ce compte.";
-
     return;
   }
 
 
   // ==================================================
-  // UN BLOC PAR POT
+  // UNE CARTE PAR POT
   // ==================================================
 
   for (const pot of pots) {
 
-    // ------------------------------------------------
-    // Création interface
-    // ------------------------------------------------
+    // ==================================================
+    // CARTE PRINCIPALE
+    // ==================================================
 
-    const potElement =
-      document.createElement("div");
+    const potCard =
+      createElement("article", "pot-card");
 
+
+    // --------------------------------------------------
+    // HEADER CARTE
+    // --------------------------------------------------
+
+    const potHeader =
+      createElement("div", "pot-card__header");
+
+    const titleBlock =
+      createElement("div", "pot-card__title");
 
     const title =
-      document.createElement("h3");
-
-    title.textContent = pot.name;
-
-
-    const plantName =
-      document.createElement("p");
-
-    plantName.textContent =
-      "Plante : chargement...";
-
-
-    const speciesName =
-      document.createElement("p");
-
-    speciesName.textContent =
-      "Espèce : chargement...";
-
+      createElement(
+        "h2",
+        "",
+        pot.name
+      );
 
     const mac =
-      document.createElement("p");
+      createElement(
+        "span",
+        "pot-card__mac",
+        `MAC : ${pot.mac_address}`
+      );
 
-    mac.textContent =
-      "Adresse MAC : " +
-      pot.mac_address;
+    titleBlock.appendChild(title);
 
+    potHeader.appendChild(titleBlock);
+    potHeader.appendChild(mac);
 
-    const humidity =
-      document.createElement("p");
-
-    humidity.textContent =
-      "Humidité : chargement...";
-
-
-    const light =
-      document.createElement("p");
-
-    light.textContent =
-      "Luminosité : chargement...";
+    potCard.appendChild(potHeader);
 
 
-    const water =
-      document.createElement("p");
+    // ==================================================
+    // ZONE CENTRALE : PLANTE + ANALYSE
+    // ==================================================
 
-    water.textContent =
-      "Niveau d'eau : chargement...";
+    const overview =
+      createElement(
+        "div",
+        "pot-card__overview"
+      );
 
 
-    const decisionElement =
-      document.createElement("div");
+    // --------------------------------------------------
+    // COLONNE PLANTE
+    // --------------------------------------------------
 
-    decisionElement.innerHTML =
-      "<p>Analyse POCO : chargement...</p>";
+    const plantPanel =
+      createElement(
+        "section",
+        "panel plant-panel"
+      );
 
+    const plantTitle =
+      createElement(
+        "h3",
+        "panel__title",
+        "🌱 Ma plante"
+      );
+
+    const plantName =
+      createElement(
+        "p",
+        "plant-name",
+        "Chargement..."
+      );
+
+    const speciesName =
+      createElement(
+        "p",
+        "species-name",
+        ""
+      );
+
+    plantPanel.appendChild(plantTitle);
+    plantPanel.appendChild(plantName);
+    plantPanel.appendChild(speciesName);
+
+
+    // --------------------------------------------------
+    // COLONNE ANALYSE
+    // --------------------------------------------------
+
+    const decisionPanel =
+      createElement(
+        "section",
+        "panel decision-panel"
+      );
+
+    decisionPanel.innerHTML = `
+      <h3 class="panel__title">
+        🧠 Analyse POCO
+      </h3>
+
+      <p class="loading">
+        Analyse en cours...
+      </p>
+    `;
+
+    overview.appendChild(plantPanel);
+    overview.appendChild(decisionPanel);
+
+    potCard.appendChild(overview);
+
+
+    // ==================================================
+    // ACTIONS
+    // ==================================================
+
+    const actionPanel =
+      createElement(
+        "section",
+        "pot-actions"
+      );
 
     const waterButton =
-      document.createElement("button");
-
-    waterButton.textContent =
-      "Arroser";
+      createElement(
+        "button",
+        "button button--primary",
+        "💧 Arroser"
+      );
 
     const ledButton =
-      document.createElement("button");
-
-    ledButton.textContent =
-      "Allumer LED";
+      createElement(
+        "button",
+        "button button--secondary",
+        "💡 Allumer LED"
+      );
 
     let ledIsOn = false;
 
+    actionPanel.appendChild(waterButton);
+    actionPanel.appendChild(ledButton);
 
-    // ------------------------------------------------
-    // Construction de la carte
-    // ------------------------------------------------
-
-    potElement.appendChild(title);
-    potElement.appendChild(plantName);
-    potElement.appendChild(speciesName);
-    potElement.appendChild(mac);
-
-    // potElement.appendChild(humidity);
-    // potElement.appendChild(light);
-    // potElement.appendChild(water);
-
-    potElement.appendChild(
-      decisionElement
-    );
-
-    potElement.appendChild(
-      waterButton
-    );
-
-    potElement.appendChild(
-      ledButton
-    );
-
-
-    container.appendChild(
-      potElement
-    );
+    potCard.appendChild(actionPanel);
 
 
     // ==================================================
-    // FONCTION : CHARGEMENT ANALYSE POCO
+    // RECHERCHE PERENUAL
     // ==================================================
 
-    async function loadDecision() {
+    const searchPanel =
+      createElement(
+        "section",
+        "species-search"
+      );
 
+    const searchTitle =
+      createElement(
+        "h3",
+        "panel__title",
+        "🔎 Rechercher une espèce"
+      );
+
+    const searchHelp =
+      createElement(
+        "p",
+        "species-search__help",
+        "Recherche par nom anglais ou scientifique."
+      );
+
+    const searchForm =
+      createElement(
+        "div",
+        "species-search__form"
+      );
+
+    const searchInput =
+      createElement(
+        "input",
+        "species-search__input"
+      );
+
+    searchInput.type = "text";
+    searchInput.placeholder =
+      "Ex. rose, Rosa, Chamaerops...";
+
+    const searchButton =
+      createElement(
+        "button",
+        "button button--search",
+        "Rechercher"
+      );
+
+    const searchResults =
+      createElement(
+        "div",
+        "species-results"
+      );
+
+    searchForm.appendChild(searchInput);
+    searchForm.appendChild(searchButton);
+
+    searchPanel.appendChild(searchTitle);
+    searchPanel.appendChild(searchHelp);
+    searchPanel.appendChild(searchForm);
+    searchPanel.appendChild(searchResults);
+
+    potCard.appendChild(searchPanel);
+
+
+    container.appendChild(potCard);
+
+
+    // ==================================================
+    // CHARGEMENT PLANTE
+    // ==================================================
+
+    async function loadPlant() {
       try {
-
-        const decisionResponse =
-          await fetch(
-            `/api/pots/${pot.id}/decision`,
-            {
-              method: "GET",
-              headers: {
-                Authorization:
-                  `Bearer ${session.access_token}`,
-              },
-            }
-          );
-
-
-        if (!decisionResponse.ok) {
-
-          decisionElement.innerHTML =
-            "<p>Analyse POCO indisponible</p>";
-
-          return;
-        }
-
-
-        const decision =
-          await decisionResponse.json();
-
-
-        const analysis =
-          decision.poco_analysis;
-
-
-        // ------------------------------
-        // Humidité
-        // ------------------------------
-
-        const soilText =
-          analysis.soil_status ===
-          "insufficient"
-            ? "Insuffisante — arrosage recommandé"
-            : "Correcte";
-
-
-        // ------------------------------
-        // Luminosité
-        // ------------------------------
-
-        const lightText =
-          analysis.light_status ===
-          "insufficient"
-            ? "Insuffisante — éclairage complémentaire recommandé"
-            : "Correcte";
-
-
-        // ------------------------------
-        // Réservoir
-        // ------------------------------
-
-        const waterText =
-          analysis.water_status ===
-          "available"
-            ? "Disponible"
-            : "Insuffisant";
-
-
-        // ------------------------------
-        // Affichage
-        // ------------------------------
-
-        decisionElement.innerHTML = `
-          <h4>Analyse POCO</h4>
-
-          <p>
-            💧 Humidité :
-            ${soilText}
-          </p>
-
-          <p>
-            ☀️ Luminosité :
-            ${lightText}
-          </p>
-
-          <p>
-            🚰 Réservoir :
-            ${waterText}
-          </p>
-
-          <p>
-            Moyenne humidité :
-            ${analysis.average_soil_moisture} %
-          </p>
-
-          <p>
-            Moyenne luminosité :
-            ${analysis.average_light_lux} lux
-          </p>
-        `;
-
-      } catch (error) {
-
-        console.error(
-          "Erreur analyse POCO :",
-          error
-        );
-
-
-        decisionElement.innerHTML =
-          "<p>Analyse POCO indisponible</p>";
-      }
-    }
-
-
-    // ==================================================
-    // PLANTE ASSOCIÉE
-    // ==================================================
-
-    try {
-
-      const plantResponse =
-        await fetch(
+        const response = await fetch(
           `/api/pots/${pot.id}/plant`,
           {
             method: "GET",
@@ -332,61 +309,52 @@ async function loadDashboard() {
           }
         );
 
+        if (response.status === 404) {
+          plantName.textContent =
+            "Aucune plante associée";
 
-      if (
-        plantResponse.status === 404
-      ) {
+          speciesName.textContent = "";
+          return;
+        }
 
-        plantName.textContent =
-          "Aucune plante associée";
+        if (!response.ok) {
+          plantName.textContent =
+            "Erreur de chargement";
 
-        speciesName.textContent = "";
-
-      } else if (
-        !plantResponse.ok
-      ) {
-
-        plantName.textContent =
-          "Erreur lors du chargement de la plante";
-
-        speciesName.textContent = "";
-
-      } else {
+          speciesName.textContent = "";
+          return;
+        }
 
         const plant =
-          await plantResponse.json();
-
+          await response.json();
 
         plantName.textContent =
-          `Plante : ${plant.nickname}`;
-
+          plant.nickname;
 
         speciesName.textContent =
-          `Espèce : ${plant.species.common_name} — ${plant.species.scientific_name}`;
+          `${plant.species.common_name}
+           — ${plant.species.scientific_name}`;
+
+      } catch (error) {
+        console.error(
+          "Erreur récupération plante :",
+          error
+        );
+
+        plantName.textContent =
+          "Erreur lors du chargement";
       }
-
-    } catch (error) {
-
-      console.error(
-        "Erreur récupération plante :",
-        error
-      );
-
-
-      plantName.textContent =
-        "Erreur lors du chargement de la plante";
     }
 
 
     // ==================================================
-    // DERNIÈRE MESURE AU CHARGEMENT
+    // ANALYSE POCO
     // ==================================================
 
-    try {
-
-      const measurementResponse =
-        await fetch(
-          `/api/measurements/${pot.id}/latest`,
+    async function loadDecision() {
+      try {
+        const response = await fetch(
+          `/api/pots/${pot.id}/decision`,
           {
             method: "GET",
             headers: {
@@ -396,67 +364,543 @@ async function loadDashboard() {
           }
         );
 
+        if (!response.ok) {
+          decisionPanel.innerHTML = `
+            <h3 class="panel__title">
+              🧠 Analyse POCO
+            </h3>
 
-      if (
-        measurementResponse.status === 404
-      ) {
+            <p>
+              Analyse indisponible
+            </p>
+          `;
 
-        humidity.textContent =
-          "Humidité : aucune mesure disponible";
+          return;
+        }
 
-        light.textContent =
-          "Luminosité : aucune mesure disponible";
+        const decision =
+          await response.json();
 
-        water.textContent =
-          "Niveau d'eau : aucune mesure disponible";
-
-      } else if (
-        !measurementResponse.ok
-      ) {
-
-        humidity.textContent =
-          "Humidité : erreur de chargement";
-
-        light.textContent =
-          "Luminosité : erreur de chargement";
-
-        water.textContent =
-          "Niveau d'eau : erreur de chargement";
-
-      } else {
-
-        const measurement =
-          await measurementResponse.json();
+        const analysis =
+          decision.poco_analysis;
 
 
-        humidity.textContent =
-          `Humidité : ${measurement.soil_moisture} %`;
+        const soilStatus =
+          analysis.soil_status ===
+          "insufficient"
+            ? "Insuffisante"
+            : "Correcte";
 
 
-        light.textContent =
-          `Luminosité : ${measurement.light_lux} lux`;
+        const lightStatus =
+          analysis.light_status ===
+          "insufficient"
+            ? "Insuffisante"
+            : "Correcte";
 
 
-        water.textContent =
-          measurement.water_level
-            ? "Niveau d'eau : OK"
-            : "Niveau d'eau : BAS";
+        const waterStatus =
+          analysis.water_status ===
+          "available"
+            ? "Disponible"
+            : "Insuffisant";
+
+
+        const soilClass =
+          analysis.soil_status ===
+          "insufficient"
+            ? "status status--warning"
+            : "status status--ok";
+
+
+        const lightClass =
+          analysis.light_status ===
+          "insufficient"
+            ? "status status--warning"
+            : "status status--ok";
+
+
+        const waterClass =
+          analysis.water_status ===
+          "available"
+            ? "status status--ok"
+            : "status status--danger";
+
+
+        decisionPanel.innerHTML = `
+          <h3 class="panel__title">
+            🧠 Analyse POCO
+          </h3>
+
+          <div class="analysis-row">
+            <span>💧 Humidité</span>
+
+            <span class="${soilClass}">
+              ${soilStatus}
+            </span>
+          </div>
+
+          <p class="analysis-detail">
+            Moyenne :
+            ${analysis.average_soil_moisture} %
+          </p>
+
+          ${
+            analysis.soil_status ===
+            "insufficient"
+              ? `
+                <p class="recommendation">
+                  Arrosage recommandé
+                </p>
+              `
+              : ""
+          }
+
+          <div class="analysis-row">
+            <span>☀️ Luminosité</span>
+
+            <span class="${lightClass}">
+              ${lightStatus}
+            </span>
+          </div>
+
+          <p class="analysis-detail">
+            Moyenne :
+            ${analysis.average_light_lux} lux
+          </p>
+
+          ${
+            analysis.light_status ===
+            "insufficient"
+              ? `
+                <p class="recommendation">
+                  Éclairage complémentaire recommandé
+                </p>
+              `
+              : ""
+          }
+
+          <div class="analysis-row">
+            <span>🚰 Réservoir</span>
+
+            <span class="${waterClass}">
+              ${waterStatus}
+            </span>
+          </div>
+        `;
+
+      } catch (error) {
+        console.error(
+          "Erreur analyse POCO :",
+          error
+        );
+
+        decisionPanel.innerHTML = `
+          <h3 class="panel__title">
+            🧠 Analyse POCO
+          </h3>
+
+          <p>
+            Analyse indisponible
+          </p>
+        `;
       }
-
-    } catch (error) {
-
-      console.error(
-        "Erreur récupération mesure :",
-        error
-      );
     }
 
 
     // ==================================================
-    // ANALYSE POCO INITIALE
+    // RECHERCHE PERENUAL
     // ==================================================
 
-    await loadDecision();
+    async function searchPerenual() {
+      const query =
+        searchInput.value.trim();
+
+      if (query.length < 2) {
+        searchResults.textContent =
+          "Saisis au moins 2 caractères.";
+        return;
+      }
+
+      searchButton.disabled = true;
+      searchButton.textContent =
+        "Recherche...";
+
+      searchResults.innerHTML =
+        `<p>Recherche en cours...</p>`;
+
+      try {
+        const response = await fetch(
+          `/api/perenual/search?q=${encodeURIComponent(query)}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization:
+                `Bearer ${session.access_token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          searchResults.textContent =
+            "Erreur lors de la recherche.";
+          return;
+        }
+
+        const results =
+          await response.json();
+
+        searchResults.innerHTML = "";
+
+        if (!results.length) {
+          searchResults.textContent =
+            "Aucun résultat.";
+          return;
+        }
+
+
+        results
+          .slice(0, 5)
+          .forEach((species) => {
+
+            const result =
+              createElement(
+                "div",
+                "species-result"
+              );
+
+
+            const info =
+              createElement(
+                "div",
+                "species-result__info"
+              );
+
+
+            const commonName =
+              createElement(
+                "strong",
+                "species-result__name",
+                species.common_name
+              );
+
+
+            const scientific =
+              Array.isArray(
+                species.scientific_name
+              )
+                ? species.scientific_name[0]
+                : species.scientific_name;
+
+
+            const scientificName =
+              createElement(
+                "span",
+                "species-result__scientific",
+                scientific
+              );
+
+
+            info.appendChild(commonName);
+            info.appendChild(scientificName);
+
+
+            const assignButton =
+              createElement(
+                "button",
+                "button button--small",
+                "Associer"
+              );
+
+
+            assignButton.addEventListener(
+              "click",
+              async () => {
+
+                assignButton.disabled = true;
+
+                assignButton.textContent =
+                  "Association...";
+
+
+                try {
+                  const assignResponse =
+                    await fetch(
+                      `/api/pots/${pot.id}/species/perenual`,
+                      {
+                        method: "POST",
+
+                        headers: {
+                          Authorization:
+                            `Bearer ${session.access_token}`,
+
+                          "Content-Type":
+                            "application/json",
+                        },
+
+                        body:
+                          JSON.stringify({
+                            perenualId:
+                              species.id,
+                          }),
+                      }
+                    );
+
+
+                  if (!assignResponse.ok) {
+                    const errorData =
+                      await assignResponse.json();
+
+                    console.error(
+                      "Erreur association Perenual :",
+                      errorData
+                    );
+
+                    assignButton.textContent =
+                      "Erreur";
+
+                    return;
+                  }
+
+
+                  assignButton.textContent =
+                    "Associée ✓";
+
+
+                  await loadPlant();
+                  await loadDecision();
+
+
+                  setTimeout(() => {
+                    searchResults.innerHTML = "";
+                    searchInput.value = "";
+                  }, 1000);
+
+
+                } catch (error) {
+                  console.error(
+                    "Erreur association :",
+                    error
+                  );
+
+                  assignButton.textContent =
+                    "Erreur";
+                }
+              }
+            );
+
+
+            result.appendChild(info);
+            result.appendChild(
+              assignButton
+            );
+
+            searchResults.appendChild(
+              result
+            );
+          });
+
+      } catch (error) {
+        console.error(
+          "Erreur recherche Perenual :",
+          error
+        );
+
+        searchResults.textContent =
+          "Erreur lors de la recherche.";
+
+      } finally {
+        searchButton.disabled = false;
+
+        searchButton.textContent =
+          "Rechercher";
+      }
+    }
+
+
+    searchButton.addEventListener(
+      "click",
+      searchPerenual
+    );
+
+
+    searchInput.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "Enter") {
+          searchPerenual();
+        }
+      }
+    );
+
+
+    // ==================================================
+    // ARROSAGE
+    // ==================================================
+
+    waterButton.addEventListener(
+      "click",
+      async () => {
+
+        waterButton.disabled = true;
+
+        waterButton.textContent =
+          "Arrosage...";
+
+
+        try {
+          const response = await fetch(
+            `/api/pots/${pot.id}/water`,
+            {
+              method: "POST",
+
+              headers: {
+                Authorization:
+                  `Bearer ${session.access_token}`,
+              },
+            }
+          );
+
+
+          if (!response.ok) {
+            const errorData =
+              await response.json();
+
+
+            waterButton.textContent =
+              "Arrosage impossible";
+
+
+            const message =
+              createElement(
+                "p",
+                "action-error",
+                errorData.error ||
+                  "Impossible d'arroser"
+              );
+
+
+            actionPanel.appendChild(
+              message
+            );
+
+
+            setTimeout(() => {
+              message.remove();
+
+              waterButton.textContent =
+                "💧 Arroser";
+
+              waterButton.disabled =
+                false;
+            }, 4000);
+
+
+            return;
+          }
+
+
+          waterButton.textContent =
+            "Arrosage envoyé ✓";
+
+
+          setTimeout(() => {
+            waterButton.textContent =
+              "💧 Arroser";
+
+            waterButton.disabled =
+              false;
+          }, 2000);
+
+
+        } catch (error) {
+          console.error(
+            "Erreur arrosage :",
+            error
+          );
+
+
+          waterButton.textContent =
+            "Erreur";
+
+
+          setTimeout(() => {
+            waterButton.textContent =
+              "💧 Arroser";
+
+            waterButton.disabled =
+              false;
+          }, 2000);
+        }
+      }
+    );
+
+
+    // ==================================================
+    // LED
+    // ==================================================
+
+    ledButton.addEventListener(
+      "click",
+      async () => {
+
+        ledButton.disabled = true;
+
+        const action =
+          ledIsOn ? "off" : "on";
+
+
+        try {
+          const response = await fetch(
+            `/api/pots/${pot.id}/led`,
+            {
+              method: "POST",
+
+              headers: {
+                Authorization:
+                  `Bearer ${session.access_token}`,
+
+                "Content-Type":
+                  "application/json",
+              },
+
+              body:
+                JSON.stringify({
+                  action,
+                }),
+            }
+          );
+
+
+          if (!response.ok) {
+            console.error(
+              "Erreur commande LED"
+            );
+
+            return;
+          }
+
+
+          ledIsOn = !ledIsOn;
+
+
+          ledButton.textContent =
+            ledIsOn
+              ? "💡 Éteindre LED"
+              : "💡 Allumer LED";
+
+
+        } catch (error) {
+          console.error(
+            "Erreur commande LED :",
+            error
+          );
+
+        } finally {
+          ledButton.disabled = false;
+        }
+      }
+    );
 
 
     // ==================================================
@@ -469,55 +913,22 @@ async function loadDashboard() {
       )
       .on(
         "postgres_changes",
+
         {
           event: "INSERT",
           schema: "public",
           table: "measurements",
+
           filter:
             `pot_id=eq.${pot.id}`,
         },
 
-        async (payload) => {
-
-          console.log(
-            "Nouvelle mesure Realtime :",
-            payload.new
-          );
-
-
-          const measurement =
-            payload.new;
-
-
-          // ------------------------------
-          // Actualisation valeurs brutes
-          // ------------------------------
-
-          humidity.textContent =
-            `Humidité : ${measurement.soil_moisture} %`;
-
-
-          light.textContent =
-            `Luminosité : ${measurement.light_lux} lux`;
-
-
-          water.textContent =
-            measurement.water_level
-              ? "Niveau d'eau : OK"
-              : "Niveau d'eau : BAS";
-
-
-          // ------------------------------
-          // IMPORTANT :
-          // recalcul du moteur POCO
-          // ------------------------------
-
+        async () => {
           await loadDecision();
         }
       )
       .subscribe(
         (status) => {
-
           console.log(
             `Realtime ${pot.name} :`,
             status
@@ -527,181 +938,11 @@ async function loadDashboard() {
 
 
     // ==================================================
-    // COMMANDE D'ARROSAGE
+    // CHARGEMENT INITIAL
     // ==================================================
 
-    waterButton.addEventListener(
-      "click",
-      async () => {
-
-        try {
-
-          waterButton.disabled = true;
-
-          waterButton.textContent =
-            "Arrosage...";
-
-
-          const response =
-            await fetch(
-              `/api/pots/${pot.id}/water`,
-              {
-                method: "POST",
-                headers: {
-                  Authorization:
-                    `Bearer ${session.access_token}`,
-                },
-              }
-            );
-
-
-          // --------------------------------
-          // Commande refusée
-          // --------------------------------
-
-          if (!response.ok) {
-
-            const errorData =
-              await response.json();
-
-
-            console.error(
-              "Erreur commande arrosage :",
-              errorData
-            );
-
-
-            waterButton.textContent =
-              "Arrosage impossible";
-
-
-            const errorMessage =
-              document.createElement("p");
-
-
-            errorMessage.textContent =
-              errorData.error ||
-              "Impossible d'arroser";
-
-
-            errorMessage.style.color =
-              "red";
-
-
-            potElement.appendChild(
-              errorMessage
-            );
-
-
-            setTimeout(
-              () => {
-
-                errorMessage.remove();
-
-                waterButton.textContent =
-                  "Arroser";
-
-                waterButton.disabled =
-                  false;
-
-              },
-              4000
-            );
-
-
-            return;
-          }
-
-
-          // --------------------------------
-          // Commande acceptée
-          // --------------------------------
-
-          waterButton.textContent =
-            "Arrosage envoyé ✓";
-
-
-          setTimeout(
-            () => {
-
-              waterButton.textContent =
-                "Arroser";
-
-              waterButton.disabled =
-                false;
-
-            },
-            2000
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            "Erreur lors de l'arrosage :",
-            error
-          );
-
-
-          waterButton.textContent =
-            "Erreur";
-
-
-          setTimeout(
-            () => {
-
-              waterButton.textContent =
-                "Arroser";
-
-              waterButton.disabled =
-                false;
-
-            },
-            2000
-          );
-        }
-      }
-    );
-
-    ledButton.addEventListener(
-      "click",
-      async () => {
-
-        const action =
-          ledIsOn ? "off" : "on";
-
-        const response = await fetch(
-          `/api/pots/${pot.id}/led`,
-          {
-            method: "POST",
-            headers: {
-              Authorization:
-                `Bearer ${session.access_token}`,
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-              action,
-            }),
-          }
-        );
-
-        if (!response.ok) {
-          console.error(
-            "Erreur commande LED"
-          );
-          return;
-        }
-
-        ledIsOn = !ledIsOn;
-
-        ledButton.textContent =
-          ledIsOn
-            ? "Éteindre LED"
-            : "Allumer LED";
-      }
-    );
+    await loadPlant();
+    await loadDecision();
   }
 }
 
@@ -730,7 +971,6 @@ document
 
 
       if (error) {
-
         console.error(
           "Erreur lors de la déconnexion :",
           error

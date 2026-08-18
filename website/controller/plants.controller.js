@@ -3,6 +3,9 @@ const {
   getPlantByPot,
 } = require("../services/plants.services");
 
+const {
+  saveSpeciesFromPerenual,
+} = require("../services/perenual.services");
 
 async function assignSpeciesController(req, res) {
   try {
@@ -89,7 +92,74 @@ async function getPlantController(req, res) {
   }
 }
 
+async function assignPerenualSpeciesController(req, res) {
+  try {
+    const potId = req.params.potId;
+    const { perenualId, nickname } = req.body;
+
+    if (!perenualId) {
+      return res.status(400).json({
+        error: "perenualId manquant",
+      });
+    }
+
+    // 1. Récupérer les détails depuis Perenual
+    // et enregistrer l'espèce dans species
+    const species =
+      await saveSpeciesFromPerenual(
+        perenualId
+      );
+
+    // 2. Associer l'espèce au pot
+    const plant =
+      await assignSpeciesToPot(
+        req.supabase,
+        potId,
+        species.id,
+        nickname
+      );
+
+    return res.status(200).json({
+      success: true,
+      plant,
+    });
+
+  } catch (error) {
+    console.error(
+      "Erreur association Perenual :",
+      error.message
+    );
+
+    if (
+      error.message ===
+      "Pot introuvable ou accès non autorisé"
+    ) {
+      return res.status(403).json({
+        error:
+          "Pot introuvable ou accès non autorisé",
+      });
+    }
+
+    if (
+      error.message.includes(
+        "Erreur API Perenual"
+      )
+    ) {
+      return res.status(502).json({
+        error:
+          "Impossible de récupérer les données Perenual",
+      });
+    }
+
+    return res.status(500).json({
+      error:
+        "Impossible d'associer cette espèce au pot",
+    });
+  }
+}
+
 module.exports = {
   assignSpeciesController,
   getPlantController,
+  assignPerenualSpeciesController,
 };

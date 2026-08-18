@@ -3,6 +3,7 @@ const express = require("express");
 const {
   assignSpeciesController,
   getPlantController,
+  assignPerenualSpeciesController,
 } = require("../controller/plants.controller");
 
 const {
@@ -21,6 +22,12 @@ router.get(
   "/:potId/plant",
   authenticateUser,
   getPlantController,
+);
+
+router.post(
+  "/:potId/species/perenual",
+  authenticateUser,
+  assignPerenualSpeciesController
 );
 
 module.exports = router;

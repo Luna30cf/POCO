@@ -7,6 +7,7 @@ const measurementsRoutes = require("./routes/measurements.routes");
 const commandsRoutes = require("./routes/commands.routes");
 const plantsRoutes = require("./routes/plants.routes");
 const decisionRoutes = require("./routes/decisions.routes");
+const perenualRoutes = require("./routes/perenual.routes");
 const { startMqttClient } = require("./services/mqtt.services");
 
 
@@ -21,6 +22,7 @@ app.use("/api/pots", potsRoutes);
 app.use("/api/pots", commandsRoutes);
 app.use("/api/pots", plantsRoutes);
 app.use("/api/pots", decisionRoutes);
+app.use("/api/perenual",perenualRoutes);
 app.use("/api/measurements", measurementsRoutes);
 
 startMqttClient();

@@ -1,0 +1,307 @@
+/* =========================================================
+   POCO — PAGE DE CONNEXION
+========================================================= */
+
+:root {
+  --green-dark: #24513a;
+  --green: #3f7d57;
+  --green-light: #eaf3ed;
+
+  --background: #f4f7f5;
+  --surface: #ffffff;
+
+  --text: #26352b;
+  --text-light: #68746c;
+
+  --border: #dce5df;
+
+  --danger-bg: #fde7e7;
+  --danger-text: #a13a3a;
+
+  --radius: 14px;
+
+  --shadow:
+    0 8px 30px rgba(30, 60, 40, 0.10);
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background: var(--background);
+
+  color: var(--text);
+}
+
+
+/* =========================================================
+   CONTENEUR
+========================================================= */
+
+.login-container {
+  width: 100%;
+  max-width: 430px;
+}
+
+
+/* =========================================================
+   LOGO / TITRE
+========================================================= */
+
+.login-header {
+  margin-bottom: 25px;
+
+  text-align: center;
+}
+
+.login-header h1 {
+  margin: 0;
+
+  color: var(--green-dark);
+
+  font-size: 38px;
+  letter-spacing: 2px;
+}
+
+.login-header p {
+  margin: 7px 0 0;
+
+  color: var(--text-light);
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   CARTE
+========================================================= */
+
+.login-card {
+  padding: 35px;
+
+  background: var(--surface);
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius);
+
+  box-shadow: var(--shadow);
+}
+
+.login-card h2 {
+  margin: 0 0 7px;
+
+  color: var(--green-dark);
+
+  font-size: 23px;
+}
+
+.login-description {
+  margin: 0 0 27px;
+
+  color: var(--text-light);
+
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   FORMULAIRE
+========================================================= */
+
+.form-group {
+  margin-bottom: 19px;
+}
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: var(--text);
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+  min-height: 45px;
+
+  padding: 11px 13px;
+
+  border: 1px solid #bccac0;
+
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: var(--text);
+
+  font-size: 15px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--green);
+
+  box-shadow:
+    0 0 0 3px rgba(63, 125, 87, 0.12);
+}
+
+.form-group input::placeholder {
+  color: #9ba59e;
+}
+
+
+/* =========================================================
+   BOUTON CONNEXION
+========================================================= */
+
+.login-button {
+  width: 100%;
+  min-height: 46px;
+
+  margin-top: 5px;
+
+  padding: 11px 18px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background: var(--green);
+
+  color: white;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+
+.login-button:hover {
+  background: var(--green-dark);
+}
+
+.login-button:active {
+  transform: scale(0.99);
+}
+
+.login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   MESSAGE D'ERREUR
+========================================================= */
+
+#error-message,
+.login-error {
+  margin-top: 17px;
+
+  padding: 10px 12px;
+
+  border-radius: 7px;
+
+  background: var(--danger-bg);
+
+  color: var(--danger-text);
+
+  font-size: 13px;
+}
+
+
+/* Évite d'afficher une boîte vide */
+#error-message:empty {
+  display: none;
+}
+
+
+/* =========================================================
+   PETIT TEXTE BAS DE PAGE
+========================================================= */
+
+.login-footer {
+  margin-top: 20px;
+
+  text-align: center;
+
+  color: var(--text-light);
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  body {
+    align-items: flex-start;
+
+    padding: 45px 18px 25px;
+  }
+
+  .login-container {
+    max-width: none;
+  }
+
+  .login-header h1 {
+    font-size: 32px;
+  }
+
+  .login-card {
+    padding: 25px 20px;
+
+    border-radius: 11px;
+  }
+
+  .login-card h2 {
+    font-size: 21px;
+  }
+
+  .form-group input {
+    min-height: 48px;
+
+    font-size: 16px;
+  }
+
+  .login-button {
+    min-height: 48px;
+  }
+}
