@@ -1,7 +1,5 @@
-const app = require("./website");
+const PORT = process.env.PORT || 5000;
 
-const port = process.env.PORT || 5000;
-
-app.listen(port, () => {
-  console.log("Server running on http://localhost:" + port + "/login");
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Serveur POCO lancé sur le port ${PORT}`);
 });
