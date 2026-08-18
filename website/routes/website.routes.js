@@ -20,4 +20,17 @@ router.get("/login", (req, res) => {
   );
 });
 
+router.get(
+  "/register",
+  (req, res) => {
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "../templates/register.html"
+      )
+    );
+  }
+);
+
 module.exports = router;
