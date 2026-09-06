@@ -32,6 +32,74 @@
     Se déconnecter
   </button>
 
+  <div id="wifi-modal" class="modal" hidden>
+
+  <div class="modal__content">
+
+    <button
+      id="wifi-modal-close"
+      class="modal__close"
+      type="button"
+      aria-label="Fermer"
+    >
+      ×
+    </button>
+
+    <h2>Configuration Wi-Fi</h2>
+
+    <p id="wifi-pot-name"></p>
+
+    <label for="wifi-ssid">
+      Nom du réseau Wi-Fi
+    </label>
+
+    <input
+      id="wifi-ssid"
+      type="text"
+      placeholder="SSID"
+    >
+
+    <label for="wifi-security">
+      Sécurité
+    </label>
+
+    <select id="wifi-security">
+      <option value="password">
+        Réseau protégé
+      </option>
+
+      <option value="open">
+        Réseau ouvert
+      </option>
+    </select>
+
+    <div id="wifi-password-container">
+
+      <label for="wifi-password">
+        Mot de passe
+      </label>
+
+      <input
+        id="wifi-password"
+        type="password"
+        placeholder="Mot de passe Wi-Fi"
+      >
+
+    </div>
+
+      <button
+        id="send-wifi-button"
+        type="button"
+      >
+        Connecter au Wi-Fi
+      </button>
+
+      <p id="wifi-status"></p>
+
+    </div>
+
+    </div>
+
   <script src="/pages/dashboard.js"></script>
 
 </body>

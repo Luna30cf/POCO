@@ -995,6 +995,15 @@ const addPotButton =
 const bluetoothStatus =
   document.getElementById("bluetooth-status");
 
+const wifiModal =
+  document.getElementById("wifi-modal");
+
+const wifiModalClose =
+  document.getElementById("wifi-modal-close");
+
+const wifiPotName =
+  document.getElementById("wifi-pot-name");
+
 
 addPotButton.addEventListener(
   "click",
@@ -1051,9 +1060,11 @@ addPotButton.addEventListener(
 
       bluetoothStatus.textContent =
         `Connecté à ${device.name} ✓`;
+      
+      wifiPotName.textContent =
+        device.name;
 
-            bluetoothStatus.textContent =
-              `Pot détecté : ${device.name}`;
+      wifiModal.hidden = false;
 
     } catch (error) {
 
@@ -1065,5 +1076,12 @@ addPotButton.addEventListener(
       bluetoothStatus.textContent =
         "Aucun pot sélectionné.";
     }
+  }
+);
+
+wifiModalClose.addEventListener(
+  "click",
+  () => {
+    wifiModal.hidden = true;
   }
 );
