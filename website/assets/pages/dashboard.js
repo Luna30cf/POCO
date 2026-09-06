@@ -1053,6 +1053,8 @@ addPotButton.addEventListener(
           POCO_SERVICE_UUID
         );
 
+      currentPocoService = service;
+
       console.log(
         "Service POCO trouvé :",
         service
@@ -1083,5 +1085,170 @@ wifiModalClose.addEventListener(
   "click",
   () => {
     wifiModal.hidden = true;
+  }
+);
+
+// ======================================================
+// PROVISIONING WI-FI PAR BLUETOOTH
+// ======================================================
+
+const POCO_SSID_UUID =
+  "12345678-1234-5678-1234-56789abcdef1";
+
+const POCO_PASSWORD_UUID =
+  "12345678-1234-5678-1234-56789abcdef2";
+
+const POCO_SECURITY_UUID =
+  "12345678-1234-5678-1234-56789abcdef3";
+
+
+const wifiSsid =
+  document.getElementById("wifi-ssid");
+
+const wifiSecurity =
+  document.getElementById("wifi-security");
+
+const wifiPassword =
+  document.getElementById("wifi-password");
+
+const wifiPasswordContainer =
+  document.getElementById("wifi-password-container");
+
+const sendWifiButton =
+  document.getElementById("send-wifi-button");
+
+const wifiStatus =
+  document.getElementById("wifi-status");
+
+
+let currentPocoService = null;
+
+
+// Cache le mot de passe pour un réseau ouvert
+wifiSecurity.addEventListener(
+  "change",
+  () => {
+
+    const isOpen =
+      wifiSecurity.value === "open";
+
+    wifiPasswordContainer.hidden =
+      isOpen;
+
+    if (isOpen) {
+      wifiPassword.value = "";
+    }
+  }
+);
+
+
+// Envoi de la configuration à l'ESP32
+sendWifiButton.addEventListener(
+  "click",
+  async () => {
+
+    const ssid =
+      wifiSsid.value.trim();
+
+    const security =
+      wifiSecurity.value;
+
+    const password =
+      wifiPassword.value;
+
+
+    if (!ssid) {
+      wifiStatus.textContent =
+        "Le nom du réseau est obligatoire.";
+      return;
+    }
+
+
+    if (
+      security === "password" &&
+      !password
+    ) {
+      wifiStatus.textContent =
+        "Le mot de passe est obligatoire.";
+      return;
+    }
+
+
+    if (!currentPocoService) {
+      wifiStatus.textContent =
+        "Le pot n'est plus connecté en Bluetooth.";
+      return;
+    }
+
+
+    sendWifiButton.disabled = true;
+
+    wifiStatus.textContent =
+      "Envoi de la configuration...";
+
+
+    try {
+
+      const encoder =
+        new TextEncoder();
+
+
+      const ssidCharacteristic =
+        await currentPocoService.getCharacteristic(
+          POCO_SSID_UUID
+        );
+
+
+      const passwordCharacteristic =
+        await currentPocoService.getCharacteristic(
+          POCO_PASSWORD_UUID
+        );
+
+
+      const securityCharacteristic =
+        await currentPocoService.getCharacteristic(
+          POCO_SECURITY_UUID
+        );
+
+
+      // 1. SSID
+      await ssidCharacteristic.writeValue(
+        encoder.encode(ssid)
+      );
+
+
+      // 2. Mot de passe si réseau protégé
+      if (security === "password") {
+
+        await passwordCharacteristic.writeValue(
+          encoder.encode(password)
+        );
+      }
+
+
+      // 3. Sécurité envoyée en dernier
+      await securityCharacteristic.writeValue(
+        encoder.encode(security)
+      );
+
+
+      wifiStatus.textContent =
+        "Configuration Wi-Fi envoyée ✓";
+
+
+    } catch (error) {
+
+      console.error(
+        "Erreur provisioning Wi-Fi :",
+        error
+      );
+
+      wifiStatus.textContent =
+        "Erreur pendant la configuration Wi-Fi.";
+
+    } finally {
+
+      sendWifiButton.disabled = false;
+    }
   }
 );
