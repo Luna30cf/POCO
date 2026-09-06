@@ -1012,6 +1012,9 @@ addPotButton.addEventListener(
       "Recherche d'un pot POCO...";
 
     try {
+      const POCO_SERVICE_UUID =
+        "12345678-1234-5678-1234-56789abcdef0";
+
       const device =
         await navigator.bluetooth.requestDevice({
           filters: [
@@ -1019,15 +1022,38 @@ addPotButton.addEventListener(
               namePrefix: "poco-",
             },
           ],
+
+          optionalServices: [
+            POCO_SERVICE_UUID,
+          ],
         });
 
+      bluetoothStatus.textContent =
+        `Connexion à ${device.name}...`;
+
+      const server =
+        await device.gatt.connect();
+
       console.log(
-        "Pot Bluetooth sélectionné :",
-        device
+        "Connexion GATT réussie :",
+        server
+      );
+
+      const service =
+        await server.getPrimaryService(
+          POCO_SERVICE_UUID
+        );
+
+      console.log(
+        "Service POCO trouvé :",
+        service
       );
 
       bluetoothStatus.textContent =
-        `Pot détecté : ${device.name}`;
+        `Connecté à ${device.name} ✓`;
+
+            bluetoothStatus.textContent =
+              `Pot détecté : ${device.name}`;
 
     } catch (error) {
 
