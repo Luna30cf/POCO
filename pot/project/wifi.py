@@ -1,15 +1,30 @@
 import network
 import time
-from config import WIFI_SSID, WIFI_PASSWORD
 
+def save_wifi_config(ssid, password, security):
 
-def connect_wifi():
+    with open("wifi_config.py", "w") as file:
+        file.write(
+            'WIFI_SSID = "{}"\n'.format(ssid)
+        )
+
+        file.write(
+            'WIFI_PASSWORD = "{}"\n'.format(password)
+        )
+
+        file.write(
+            'WIFI_SECURITY = "{}"\n'.format(security)
+        )
+
+    print("Configuration Wi-Fi sauvegardée")
+
+def connect_wifi(ssid, password):
     wlan = network.WLAN(network.STA_IF)
-    
+
     # Remettre le Wi-Fi dans un état propre
     wlan.active(False)
     time.sleep(1)
-    
+
     wlan.active(True)
     time.sleep(1)
 
@@ -17,17 +32,22 @@ def connect_wifi():
         print("Wi-Fi déjà connecté :", wlan.ifconfig()[0])
         return wlan
 
-    print(f"Connexion au Wi-Fi : {WIFI_SSID}")
-    wlan.connect(WIFI_SSID, WIFI_PASSWORD)
+    while not wlan.isconnected():
 
-    timeout = 20
+        print(f"Connexion au Wi-Fi : {ssid}")
 
-    while not wlan.isconnected() and timeout > 0:
-        print(".", end="")
-        time.sleep(1)
-        timeout -= 1
+        wlan.connect(ssid, password)
 
-    if not wlan.isconnected():
+        timeout = 20
+
+        while not wlan.isconnected() and timeout > 0:
+            print(".", end="")
+            time.sleep(1)
+            timeout -= 1
+
+        if wlan.isconnected():
+            break
+
         status = wlan.status()
 
         print("\nÉchec connexion Wi-Fi")
@@ -42,11 +62,16 @@ def connect_wifi():
         else:
             print("Cause : statut non identifié")
 
-        raise RuntimeError("Impossible de se connecter au Wi-Fi")
+        print("Nouvelle tentative dans 3 secondes...\n")
+
+        try:
+            wlan.disconnect()
+        except:
+            pass
+
+        time.sleep(3)
 
     print("\nWi-Fi connecté")
     print("Adresse IP :", wlan.ifconfig()[0])
 
     return wlan
-
-connect_wifi()

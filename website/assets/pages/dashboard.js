@@ -984,3 +984,60 @@ document
         "/login";
     }
   );
+
+  // ======================================================
+// AJOUT D'UN POT - DÉTECTION BLUETOOTH
+// ======================================================
+
+const addPotButton =
+  document.getElementById("add-pot-button");
+
+const bluetoothStatus =
+  document.getElementById("bluetooth-status");
+
+
+addPotButton.addEventListener(
+  "click",
+  async () => {
+
+    // Web Bluetooth n'est pas disponible
+    // dans tous les navigateurs.
+    if (!navigator.bluetooth) {
+      bluetoothStatus.textContent =
+        "Bluetooth non disponible dans ce navigateur.";
+      return;
+    }
+
+    bluetoothStatus.textContent =
+      "Recherche d'un pot POCO...";
+
+    try {
+      const device =
+        await navigator.bluetooth.requestDevice({
+          filters: [
+            {
+              namePrefix: "poco-",
+            },
+          ],
+        });
+
+      console.log(
+        "Pot Bluetooth sélectionné :",
+        device
+      );
+
+      bluetoothStatus.textContent =
+        `Pot détecté : ${device.name}`;
+
+    } catch (error) {
+
+      console.error(
+        "Recherche Bluetooth interrompue :",
+        error
+      );
+
+      bluetoothStatus.textContent =
+        "Aucun pot sélectionné.";
+    }
+  }
+);

@@ -6,6 +6,61 @@ from config import PUMP_PIN, PUMP_DURATION, LED_PIN
 import json
 import machine
 
+try:
+    from wifi_config import WIFI_SSID, WIFI_PASSWORD, WIFI_SECURITY
+
+    print("Configuration Wi-Fi trouvée")
+    print("SSID :", WIFI_SSID)
+    print("Sécurité :", WIFI_SECURITY)
+
+except ImportError:
+
+    print("Aucune configuration Wi-Fi enregistrée")
+    print("Démarrage de la configuration Bluetooth...")
+
+    from ble import PocoBLE
+    from wifi import save_wifi_config
+
+    ble = PocoBLE("poco-D2A7E4")
+
+    print("En attente de la configuration Wi-Fi...")
+
+    # Attente du SSID et du type de réseau
+    while ble.ssid is None or ble.security is None:
+        sleep(1)
+
+    # Réseau ouvert
+    if ble.security == "open":
+        WIFI_PASSWORD = ""
+
+    # Réseau protégé
+    elif ble.security == "password":
+
+        print("En attente du mot de passe...")
+
+        while ble.password is None:
+            sleep(1)
+
+        WIFI_PASSWORD = ble.password
+
+    else:
+        raise ValueError(
+            "Type de sécurité inconnu : {}".format(
+                ble.security
+            )
+        )
+
+    WIFI_SSID = ble.ssid
+    WIFI_SECURITY = ble.security
+
+    save_wifi_config(
+        WIFI_SSID,
+        WIFI_PASSWORD,
+        WIFI_SECURITY
+    )
+
+    print("Configuration Wi-Fi enregistrée")
+
 SOIL_DRY = 28000
 SOIL_WET = 17000
 NUMBER_OF_READINGS = 5
@@ -33,7 +88,10 @@ float_sensor = Pin(
     Pin.PULL_UP
 )
 
-wlan = connect_wifi()
+wlan = connect_wifi(
+    WIFI_SSID,
+    WIFI_PASSWORD
+)
 
 mac = wlan.config("mac")
 mac_hex = mac.hex().upper()
