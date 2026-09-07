@@ -1232,8 +1232,84 @@ sendWifiButton.addEventListener(
       );
 
 
+      // ======================================================
+// ASSOCIATION DU POT AU COMPTE
+// ======================================================
+
+wifiStatus.textContent =
+  "Wi-Fi configuré. Association du pot...";
+
+
+      const {
+        data: { session },
+      } = await supabaseClient.auth.getSession();
+
+
+      if (!session) {
+        throw new Error(
+          "Session utilisateur introuvable"
+        );
+      }
+
+
+      // Le nom Bluetooth est par exemple :
+      // poco-D2A7E4
+      const deviceId =
+        wifiPotName.textContent
+          .replace(/^poco-/i, "")
+          .trim();
+
+
+      const associateResponse =
+        await fetch(
+          "/api/pots/associate",
+          {
+            method: "POST",
+
+            headers: {
+              Authorization:
+                `Bearer ${session.access_token}`,
+
+              "Content-Type":
+                "application/json",
+            },
+
+            body:
+              JSON.stringify({
+                deviceId,
+              }),
+          }
+        );
+
+
+      if (!associateResponse.ok) {
+
+        const errorData =
+          await associateResponse.json();
+
+        throw new Error(
+          errorData.error ||
+          "Impossible d'associer le pot"
+        );
+      }
+
+
+      const associatedPot =
+        await associateResponse.json();
+
+      console.log(
+        "Pot associé :",
+        associatedPot
+      );
+
+
       wifiStatus.textContent =
-        "Configuration Wi-Fi envoyée ✓";
+        "Pot configuré et associé ✓";
+
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
 
 
     } catch (error) {
