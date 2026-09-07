@@ -1,6 +1,14 @@
 const supabaseAdmin =
   require("../config/supabaseAdmin");
 
+const {
+  publishMqttMessage,
+} = require("./mqtt.services");
+
+
+// ======================================================
+// RÉCUPÉRATION DES POTS DE L'UTILISATEUR
+// ======================================================
 
 async function getUserPots(supabase) {
 
@@ -81,8 +89,6 @@ async function associatePotWithUser(
   }
 
 
-
-
   const { data, error: updateError } =
     await supabaseAdmin
       .from("pots")
@@ -105,7 +111,75 @@ async function associatePotWithUser(
 }
 
 
+// ======================================================
+// ACTIVATION DU MODE BLE POUR CHANGER LE RÉSEAU
+// ======================================================
+
+async function startPotProvisioning(
+  potId,
+  userId
+) {
+
+  // On récupère uniquement un pot appartenant
+  // à l'utilisateur connecté.
+  const { data: pot, error } =
+    await supabaseAdmin
+      .from("pots")
+      .select(
+        "id, name, user_id, mac_address"
+      )
+      .eq("id", potId)
+      .eq("user_id", userId)
+      .single();
+
+
+  if (error || !pot) {
+
+    const potError =
+      new Error("Pot POCO introuvable");
+
+    potError.code =
+      "POT_NOT_FOUND";
+
+    throw potError;
+  }
+
+
+  // Exemple :
+  // 1C:C3:AB:D2:A7:E4
+  // devient :
+  // D2A7E4
+
+  const deviceId =
+    pot.mac_address
+      .replace(/[^a-fA-F0-9]/g, "")
+      .slice(-6)
+      .toUpperCase();
+
+
+  const topic =
+    `poco/${deviceId}/provisioning`;
+
+
+  // Demande au firmware de passer en mode BLE.
+  await publishMqttMessage(
+    topic,
+    {
+      action: "start_ble",
+    }
+  );
+
+
+  return pot;
+}
+
+
+// ======================================================
+// EXPORTS
+// ======================================================
+
 module.exports = {
   getUserPots,
   associatePotWithUser,
+  startPotProvisioning,
 };

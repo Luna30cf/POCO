@@ -105,6 +105,13 @@ async function loadDashboard() {
         pot.name
       );
 
+    const changeWifiButton =
+      createElement(
+        "button",
+        "button button--small",
+        "Changer le réseau"
+      );
+
     const mac =
       createElement(
         "span",
@@ -113,11 +120,128 @@ async function loadDashboard() {
       );
 
     titleBlock.appendChild(title);
+    titleBlock.appendChild(changeWifiButton);
 
     potHeader.appendChild(titleBlock);
     potHeader.appendChild(mac);
 
     potCard.appendChild(potHeader);
+
+    // ==================================================
+    // CHANGEMENT DU RÉSEAU WI-FI
+    // ==================================================
+
+    changeWifiButton.addEventListener(
+      "click",
+      async () => {
+
+        if (!navigator.bluetooth) {
+          alert(
+            "Bluetooth non disponible dans ce navigateur."
+          );
+          return;
+        }
+
+        try {
+
+          wifiConfigurationMode = "change";
+
+          bluetoothStatus.textContent =
+            "Activation du Bluetooth du pot...";
+
+
+          // Demande au pot de passer en mode BLE via MQTT
+          const provisioningResponse =
+            await fetch(
+              `/api/pots/${pot.id}/provisioning`,
+              {
+                method: "POST",
+
+                headers: {
+                  Authorization:
+                    `Bearer ${session.access_token}`,
+                },
+              }
+            );
+
+
+          if (!provisioningResponse.ok) {
+
+            const errorData =
+              await provisioningResponse.json();
+
+            throw new Error(
+              errorData.error ||
+              "Impossible d'activer le Bluetooth du pot"
+            );
+          }
+
+
+          bluetoothStatus.textContent =
+            "Bluetooth activé. Recherche du pot...";
+
+
+          // Petite attente pour laisser l'ESP32
+          // démarrer son advertising BLE.
+          await new Promise(
+            (resolve) =>
+              setTimeout(resolve, 1500)
+          );
+
+
+          const POCO_SERVICE_UUID =
+            "12345678-1234-5678-1234-56789abcdef0";
+
+
+          const device =
+            await navigator.bluetooth.requestDevice({
+              filters: [
+                {
+                  namePrefix: "poco-",
+                },
+              ],
+
+              optionalServices: [
+                POCO_SERVICE_UUID,
+              ],
+            });
+
+
+          const server =
+            await device.gatt.connect();
+
+
+          const service =
+            await server.getPrimaryService(
+              POCO_SERVICE_UUID
+            );
+
+
+          currentPocoService =
+            service;
+
+
+          wifiPotName.textContent =
+            device.name;
+
+
+          wifiStatus.textContent =
+            "";
+
+
+          wifiModal.hidden =
+            false;
+
+
+        } catch (error) {
+
+          console.error(
+            "Erreur changement Wi-Fi :",
+            error
+          );
+        }
+      }
+    );
 
 
     // ==================================================
@@ -1021,6 +1145,8 @@ addPotButton.addEventListener(
       "Recherche d'un pot POCO...";
 
     try {
+      wifiConfigurationMode = "add";
+
       const POCO_SERVICE_UUID =
         "12345678-1234-5678-1234-56789abcdef0";
 
@@ -1122,6 +1248,8 @@ const wifiStatus =
 
 
 let currentPocoService = null;
+
+let wifiConfigurationMode = "add";
 
 
 // Cache le mot de passe pour un réseau ouvert
@@ -1236,6 +1364,20 @@ sendWifiButton.addEventListener(
 // ASSOCIATION DU POT AU COMPTE
 // ======================================================
 
+if (
+  wifiConfigurationMode === "change"
+) {
+
+  wifiStatus.textContent =
+    "Nouveau réseau configuré ✓";
+
+  setTimeout(() => {
+    wifiModal.hidden = true;
+  }, 1000);
+
+  return;
+}
+
 wifiStatus.textContent =
   "Wi-Fi configuré. Association du pot...";
 
@@ -1328,3 +1470,4 @@ wifiStatus.textContent =
     }
   }
 );
+

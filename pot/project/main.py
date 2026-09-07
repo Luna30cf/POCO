@@ -1,10 +1,11 @@
 from machine import ADC, Pin, I2C
 from time import sleep
-from wifi import connect_wifi
+from wifi import connect_wifi, save_wifi_config
 from umqtt.simple import MQTTClient
 from config import PUMP_PIN, PUMP_DURATION, LED_PIN
 import json
 import machine
+from ble import PocoBLE
 
 try:
     from wifi_config import WIFI_SSID, WIFI_PASSWORD, WIFI_SECURITY
@@ -18,8 +19,6 @@ except ImportError:
     print("Aucune configuration Wi-Fi enregistrée")
     print("Démarrage de la configuration Bluetooth...")
 
-    from ble import PocoBLE
-    from wifi import save_wifi_config
 
     ble = PocoBLE("poco-D2A7E4")
 
@@ -118,6 +117,8 @@ print("Topic pompe :", PUMP_TOPIC)
 pump = Pin(PUMP_PIN, Pin.OUT)
 pump.value(0)
 
+PROVISIONING_TOPIC = f"poco/{device_id}/provisioning".encode()
+print("Topic provisioning :", PROVISIONING_TOPIC)
 
 TOPIC_SOIL = f"poco/{device_id}/soil_sensor".encode()
 TOPIC_LIGHT = f"poco/{device_id}/light_sensor".encode()
@@ -176,6 +177,60 @@ def read_light():
 def read_float():
     return float_sensor.value()
 
+def start_wifi_provisioning():
+
+    print("--------------------")
+    print("MODE CHANGEMENT DE RÉSEAU")
+    print("--------------------")
+
+    ble = PocoBLE(
+        "poco-{}".format(device_id)
+    )
+
+    print("En attente de la nouvelle configuration Wi-Fi...")
+
+    while ble.ssid is None or ble.security is None:
+        sleep(0.2)
+
+    if ble.security == "open":
+
+        password = ""
+
+    elif ble.security == "password":
+
+        print("En attente du mot de passe...")
+
+        while ble.password is None:
+            sleep(0.2)
+
+        password = ble.password
+
+    else:
+
+        print(
+            "Type de sécurité inconnu :",
+            ble.security
+        )
+
+        return
+
+    print("Nouvelle configuration reçue")
+    print("SSID :", ble.ssid)
+    print("Sécurité :", ble.security)
+
+    save_wifi_config(
+        ble.ssid,
+        password,
+        ble.security
+    )
+
+    print("Nouvelle configuration Wi-Fi sauvegardée")
+    print("Redémarrage du POCO...")
+
+    sleep(1)
+
+    machine.reset()
+
 def on_mqtt_message(topic, message):
     print("Commande MQTT reçue")
     print("Topic :", topic)
@@ -187,6 +242,23 @@ def on_mqtt_message(topic, message):
         print("Commande JSON invalide :", error)
         return
 
+    # -------------------------
+    # CHANGEMENT DE RÉSEAU
+    # -------------------------
+
+    if topic == PROVISIONING_TOPIC:
+
+        if data.get("action") == "start_ble":
+
+            print("Demande de changement de réseau reçue")
+
+            start_wifi_provisioning()
+
+        else:
+
+            print("Commande provisioning inconnue")
+
+        return
 
     # -------------------------
     # POMPE
@@ -252,8 +324,11 @@ def on_mqtt_message(topic, message):
 client.set_callback(on_mqtt_message)
 client.subscribe(PUMP_TOPIC)
 client.subscribe(LED_TOPIC)
+client.subscribe(PROVISIONING_TOPIC)
 
 print("Abonné au topic pompe :", PUMP_TOPIC)
+print("Abonné au topic LED :", LED_TOPIC)
+print("Abonné au topic provisioning :", PROVISIONING_TOPIC)
 
 while True:
 

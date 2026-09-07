@@ -1,6 +1,7 @@
 const {
   getUserPots,
   associatePotWithUser,
+  startPotProvisioning,
 } = require("../services/pots.services");
 
 
@@ -106,8 +107,42 @@ async function associatePot(
   }
 }
 
+async function startProvisioning(req, res) {
+  try {
+    const { potId } = req.params;
+
+    const pot = await startPotProvisioning(
+      potId,
+      req.user.id
+    );
+
+    res.status(200).json({
+      message: "Mode Bluetooth demandé",
+      pot,
+    });
+
+  } catch (error) {
+    console.error(
+      "Erreur démarrage provisioning :",
+      error
+    );
+
+    if (error.code === "POT_NOT_FOUND") {
+      return res.status(404).json({
+        error: "Pot POCO introuvable",
+      });
+    }
+
+    return res.status(500).json({
+      error:
+        "Impossible d'activer le mode Bluetooth",
+    });
+  }
+}
+
 
 module.exports = {
   getPots,
   associatePot,
+  startProvisioning,
 };
