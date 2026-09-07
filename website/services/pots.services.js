@@ -81,20 +81,6 @@ async function associatePotWithUser(
   }
 
 
-  // Le pot appartient déjà à quelqu'un d'autre.
-  if (
-    pot.user_id &&
-    pot.user_id !== userId
-  ) {
-    const error =
-      new Error(
-        "Ce pot est déjà associé à un autre compte"
-      );
-
-    error.code = "POT_ALREADY_ASSOCIATED";
-
-    throw error;
-  }
 
 
   const { data, error: updateError } =
