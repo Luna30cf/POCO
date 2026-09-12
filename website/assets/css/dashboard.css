@@ -1,1098 +1,596 @@
-/* =========================================================
-   POCO — DASHBOARD
-   Desktop + responsive mobile
-========================================================= */
-
-
-/* =========================================================
-   VARIABLES
-========================================================= */
+/* ======================================================
+   POCO - DIRECTION ARTISTIQUE DASHBOARD
+   Basée sur la maquette
+   ====================================================== */
 
 :root {
-  --green-dark: #24513a;
-  --green: #3f7d57;
-  --green-light: #eaf3ed;
+  --poco-bg: #f8f6ed;
+  --poco-header: #d4cbb8;
+  --poco-green: #4f956d;
+  --poco-green-dark: #3f7f5b;
+  --poco-green-light: #dcebdd;
 
-  --background: #f4f7f5;
-  --surface: #ffffff;
-  --surface-soft: #f8faf8;
+  --poco-purple: #cbb8ef;
+  --poco-purple-light: #f1ebfb;
 
-  --text: #26352b;
-  --text-light: #68746c;
+  --poco-card: #fffef9;
+  --poco-grey: #d7d7d7;
 
-  --border: #dce5df;
+  --poco-text: #222222;
+  --poco-muted: #77736b;
 
-  --warning-bg: #fff4d8;
-  --warning-text: #8a6200;
+  --poco-danger: #d26c6c;
+  --poco-warning: #c89a3d;
 
-  --danger-bg: #fde7e7;
-  --danger-text: #a13a3a;
-
-  --success-bg: #e2f3e7;
-  --success-text: #27633b;
-
-  --radius: 14px;
-
-  --shadow:
-    0 5px 20px rgba(30, 60, 40, 0.08);
+  --poco-radius: 6px;
 }
 
 
-/* =========================================================
-   RESET
-========================================================= */
-
-* {
-  box-sizing: border-box;
-}
+/* ======================================================
+   PAGE
+   ====================================================== */
 
 body {
   margin: 0;
+  background: var(--poco-bg);
+  color: var(--poco-text);
+  font-family: Arial, sans-serif;
+}
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-
-  background:
-    var(--background);
-
-  color:
-    var(--text);
-
-  line-height: 1.5;
+.dashboard {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--poco-bg);
 }
 
 
-/* =========================================================
-   HEADER
-========================================================= */
+/* ======================================================
+   HEADER PRINCIPAL
+   ====================================================== */
 
+.dashboard__header,
 header {
-  min-height: 76px;
+  background: var(--poco-header);
+}
 
-  padding:
-    0 5%;
+.dashboard__header {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+}
+
+.dashboard__header h1 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 32px;
+  font-weight: 400;
+}
+
+
+/* ======================================================
+   CONTENU
+   ====================================================== */
+
+.dashboard__content,
+main {
+  width: min(1100px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 24px 0 60px;
+}
+
+
+/* ======================================================
+   CARTE POT
+   ====================================================== */
+
+.pot-card {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  margin-bottom: 32px;
+}
+
+
+/* ======================================================
+   NOM DU POT
+   ====================================================== */
+
+.pot-card__header {
+  background: var(--poco-header);
+  min-height: 64px;
 
   display: flex;
-
   align-items: center;
   justify-content: space-between;
 
-  gap: 25px;
+  padding: 0 24px;
 
-  background:
-    var(--surface);
-
-  border-bottom:
-    1px solid var(--border);
+  border: none;
 }
 
-
-header h1 {
-  margin: 0;
-
-  color:
-    var(--green-dark);
-
-  font-size: 28px;
-
-  letter-spacing:
-    0.5px;
-}
-
-
-#user-email {
-  margin-left: auto;
-
-  color:
-    var(--text-light);
-
-  font-size:
-    14px;
-}
-
-
-#logout-button {
-  padding:
-    9px 15px;
-
-  border:
-    1px solid var(--green);
-
-  border-radius:
-    8px;
-
-  background:
-    transparent;
-
-  color:
-    var(--green-dark);
-
-  cursor:
-    pointer;
-
-  font-weight:
-    600;
-}
-
-
-#logout-button:hover {
-  background:
-    var(--green-light);
-}
-
-
-/* =========================================================
-   CONTENU PRINCIPAL
-========================================================= */
-
-main {
-  width:
-    min(1180px, 92%);
-
-  margin:
-    38px auto 70px;
-}
-
-
-main > h2 {
-  margin:
-    0 0 25px;
-
-  color:
-    var(--green-dark);
-
-  font-size:
-    25px;
-}
-
-
-/* =========================================================
-   CONTENEUR DES POTS
-========================================================= */
-
-#pots-container {
-  display: grid;
-
-  gap:
-    30px;
-}
-
-
-/* =========================================================
-   CARTE POT
-========================================================= */
-
-.pot-card {
-  overflow: hidden;
-
-  background:
-    var(--surface);
-
-  border:
-    1px solid var(--border);
-
-  border-radius:
-    var(--radius);
-
-  box-shadow:
-    var(--shadow);
-}
-
-
-/* =========================================================
-   HEADER CARTE
-========================================================= */
-
-.pot-card__header {
-  min-height:
-    72px;
-
-  padding:
-    20px 26px;
-
+.pot-card__title {
   display: flex;
-
-  justify-content:
-    space-between;
-
-  align-items:
-    center;
-
-  gap:
-    20px;
-
-  background:
-    var(--surface-soft);
-
-  border-bottom:
-    1px solid var(--border);
+  align-items: center;
+  gap: 16px;
 }
-
 
 .pot-card__title h2 {
-  margin:
-    0;
+  margin: 0;
 
-  color:
-    var(--green-dark);
-
-  font-size:
-    23px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 30px;
+  font-weight: 400;
 }
-
 
 .pot-card__mac {
-  color:
-    var(--text-light);
-
-  font-size:
-    13px;
-
-  font-family:
-    monospace;
+  font-size: 12px;
+  color: var(--poco-muted);
 }
 
 
-/* =========================================================
-   VUE PRINCIPALE
-
-   Desktop :
-   plante | analyse
-========================================================= */
-
-.pot-card__overview {
-  padding:
-    26px;
-
-  display:
-    grid;
-
-  grid-template-columns:
-    minmax(0, 0.8fr)
-    minmax(0, 1.2fr);
-
-  gap:
-    24px;
-}
-
-
-/* =========================================================
-   PANELS
-========================================================= */
-
-.panel {
-  padding:
-    22px;
-
-  background:
-    var(--surface-soft);
-
-  border:
-    1px solid var(--border);
-
-  border-radius:
-    11px;
-}
-
-
-.panel__title {
-  margin:
-    0 0 17px;
-
-  color:
-    var(--green-dark);
-
-  font-size:
-    18px;
-}
-
-
-/* =========================================================
-   PLANTE
-========================================================= */
-
-.plant-name {
-  margin:
-    0 0 5px;
-
-  font-size:
-    21px;
-
-  font-weight:
-    700;
-
-  color:
-    var(--text);
-}
-
-
-.species-name {
-  margin:
-    0;
-
-  color:
-    var(--text-light);
-
-  font-size:
-    14px;
-
-  font-style:
-    italic;
-}
-
-
-/* =========================================================
-   ANALYSE POCO
-========================================================= */
-
-.analysis-row {
-  margin-top:
-    13px;
-
-  display:
-    flex;
-
-  justify-content:
-    space-between;
-
-  align-items:
-    center;
-
-  gap:
-    15px;
-
-  font-weight:
-    600;
-}
-
-
-.analysis-detail {
-  margin:
-    4px 0 0;
-
-  color:
-    var(--text-light);
-
-  font-size:
-    13px;
-}
-
-
-.recommendation {
-  margin:
-    7px 0 14px;
-
-  color:
-    var(--warning-text);
-
-  font-size:
-    13px;
-}
-
-
-/* =========================================================
-   BADGES D'ÉTAT
-========================================================= */
-
-.status {
-  padding:
-    5px 10px;
-
-  border-radius:
-    20px;
-
-  font-size:
-    12px;
-
-  font-weight:
-    700;
-
-  white-space:
-    nowrap;
-}
-
-
-.status--ok {
-  background:
-    var(--success-bg);
-
-  color:
-    var(--success-text);
-}
-
-
-.status--warning {
-  background:
-    var(--warning-bg);
-
-  color:
-    var(--warning-text);
-}
-
-
-.status--danger {
-  background:
-    var(--danger-bg);
-
-  color:
-    var(--danger-text);
-}
-
-
-/* =========================================================
-   ACTIONS
-========================================================= */
-
-.pot-actions {
-  padding:
-    0 26px 26px;
-
-  display:
-    flex;
-
-  align-items:
-    center;
-
-  gap:
-    12px;
-
-  flex-wrap:
-    wrap;
-}
-
-
-/* =========================================================
+/* ======================================================
    BOUTONS
-========================================================= */
+   ====================================================== */
 
 .button {
-  min-height:
-    42px;
+  border: none;
+  border-radius: 4px;
 
-  padding:
-    10px 18px;
+  padding: 9px 16px;
 
-  border:
-    0;
+  font-size: 13px;
+  font-weight: 600;
 
-  border-radius:
-    8px;
-
-  font-size:
-    14px;
-
-  font-weight:
-    600;
-
-  cursor:
-    pointer;
+  cursor: pointer;
 
   transition:
-    transform 0.1s ease,
-    background 0.2s ease,
-    opacity 0.2s ease;
+    background 0.15s ease,
+    transform 0.15s ease;
 }
-
 
 .button:hover {
-  transform:
-    translateY(-1px);
+  transform: translateY(-1px);
 }
-
-
-.button:active {
-  transform:
-    translateY(0);
-}
-
 
 .button:disabled {
-  opacity:
-    0.55;
-
-  cursor:
-    not-allowed;
-
-  transform:
-    none;
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
 }
 
 
-.button--primary {
-  background:
-    var(--green);
-
-  color:
-    white;
+.button--primary,
+.button--search {
+  background: var(--poco-green);
+  color: white;
 }
 
-
-.button--primary:hover {
-  background:
-    var(--green-dark);
+.button--primary:hover,
+.button--search:hover {
+  background: var(--poco-green-dark);
 }
 
 
 .button--secondary {
-  background:
-    var(--green-light);
-
-  color:
-    var(--green-dark);
-
-  border:
-    1px solid #c6ddcd;
-}
-
-
-.button--secondary:hover {
-  background:
-    #dcece1;
-}
-
-
-.button--search {
-  background:
-    var(--green);
-
-  color:
-    white;
-}
-
-
-.button--search:hover {
-  background:
-    var(--green-dark);
+  background: white;
+  color: var(--poco-green);
+  border: 1px solid var(--poco-green);
 }
 
 
 .button--small {
-  padding:
-    7px 13px;
+  padding: 6px 11px;
 
-  min-height:
-    35px;
+  background: var(--poco-green);
+  color: white;
 
-  background:
-    var(--green);
-
-  color:
-    white;
-
-  font-size:
-    13px;
+  font-size: 11px;
 }
 
 
-/* =========================================================
-   MESSAGE ERREUR ACTION
-========================================================= */
-
-.action-error {
-  margin:
-    0;
-
-  padding:
-    8px 12px;
-
-  background:
-    var(--danger-bg);
-
-  color:
-    var(--danger-text);
-
-  border-radius:
-    7px;
-
-  font-size:
-    13px;
-}
-
-
-/* =========================================================
-   RECHERCHE PERENUAL
-========================================================= */
+/* ======================================================
+   RECHERCHE ESPÈCE
+   ====================================================== */
 
 .species-search {
-  padding:
-    24px 26px 28px;
+  background: var(--poco-card);
 
-  background:
-    var(--surface-soft);
+  padding: 18px 22px;
 
-  border-top:
-    1px solid var(--border);
+  border-bottom:
+    1px solid #ebe7dd;
 }
-
-
-.species-search .panel__title {
-  margin-bottom:
-    3px;
-}
-
-
-.species-search__help {
-  margin:
-    0 0 14px;
-
-  color:
-    var(--text-light);
-
-  font-size:
-    13px;
-}
-
 
 .species-search__form {
-  display:
-    flex;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 
-  align-items:
-    stretch;
-
-  gap:
-    9px;
-
-  max-width:
-    700px;
+  max-width: 500px;
 }
-
 
 .species-search__input {
-  flex:
-    1;
+  flex: 1;
 
-  min-width:
-    0;
+  height: 36px;
 
-  padding:
-    11px 13px;
+  padding: 0 10px;
 
-  border:
-    1px solid #bccac0;
+  border: 1px solid #b9b9b9;
+  border-radius: 3px;
 
-  border-radius:
-    8px;
-
-  background:
-    white;
-
-  color:
-    var(--text);
-
-  font-size:
-    14px;
-
-  outline:
-    none;
+  background: white;
 }
-
 
 .species-search__input:focus {
-  border-color:
-    var(--green);
+  outline: none;
+  border-color: var(--poco-green);
+}
 
-  box-shadow:
-    0 0 0 3px
-    rgba(63, 125, 87, 0.12);
+.species-search__help {
+  margin: 3px 0 10px;
+
+  color: var(--poco-muted);
+  font-size: 11px;
 }
 
 
-/* =========================================================
+/* ======================================================
+   PANNEAUX PLANTE + ANALYSE
+   ====================================================== */
+
+.pot-card__overview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 14px;
+
+  padding: 18px 22px;
+
+  background: var(--poco-card);
+}
+
+.panel {
+  min-height: 145px;
+
+  padding: 16px;
+
+  background: #fafafa;
+
+  border: 1px solid #e1ddd3;
+  border-radius: var(--poco-radius);
+}
+
+.panel__title {
+  margin: 0 0 12px;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.plant-name {
+  margin: 8px 0 3px;
+
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.species-name {
+  margin: 0;
+
+  color: var(--poco-muted);
+  font-size: 12px;
+}
+
+
+/* ======================================================
+   ANALYSE POCO
+   ====================================================== */
+
+.analysis-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin: 8px 0 2px;
+
+  font-size: 12px;
+}
+
+.analysis-detail {
+  margin: 0 0 6px;
+
+  color: var(--poco-muted);
+  font-size: 10px;
+}
+
+.status {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.status--ok {
+  color: var(--poco-green);
+}
+
+.status--warning {
+  color: var(--poco-warning);
+}
+
+.status--danger {
+  color: var(--poco-danger);
+}
+
+.recommendation {
+  margin: 3px 0 7px;
+
+  color: var(--poco-warning);
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+
+/* ======================================================
+   ACTIONS
+   ====================================================== */
+
+.pot-actions {
+  display: flex;
+  gap: 10px;
+
+  padding: 0 22px 18px;
+
+  background: var(--poco-card);
+}
+
+
+/* ======================================================
    RÉSULTATS PERENUAL
-========================================================= */
+   ====================================================== */
 
 .species-results {
-  max-width:
-    700px;
-
-  margin-top:
-    15px;
+  margin-top: 10px;
 }
-
 
 .species-result {
-  padding:
-    11px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-  display:
-    flex;
+  padding: 9px 10px;
 
-  justify-content:
-    space-between;
+  background: white;
 
-  align-items:
-    center;
+  border: 1px solid #e1ddd3;
+  border-radius: 4px;
 
-  gap:
-    20px;
-
-  border-bottom:
-    1px solid var(--border);
+  margin-bottom: 6px;
 }
-
-
-.species-result:last-child {
-  border-bottom:
-    none;
-}
-
 
 .species-result__info {
-  min-width:
-    0;
-
-  display:
-    flex;
-
-  flex-direction:
-    column;
-
-  gap:
-    2px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
-
 
 .species-result__name {
-  font-size:
-    14px;
-
-  color:
-    var(--text);
+  font-size: 12px;
 }
-
 
 .species-result__scientific {
-  color:
-    var(--text-light);
-
-  font-size:
-    13px;
-
-  font-style:
-    italic;
+  color: var(--poco-muted);
+  font-size: 10px;
 }
 
 
-/* =========================================================
-   CHARGEMENT
-========================================================= */
+/* ======================================================
+   MODALE WI-FI
+   ====================================================== */
 
-.loading {
-  color:
-    var(--text-light);
+.modal[hidden] {
+  display: none !important;
+}
 
-  font-style:
-    italic;
+.modal {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(30, 30, 30, 0.48);
 }
 
 
-/* =========================================================
-   TABLETTE
-========================================================= */
+.modal__content {
+  position: relative;
 
-@media (max-width: 850px) {
+  width: min(340px, calc(100% - 40px));
 
-  header {
-    padding:
-      18px 4%;
-  }
+  padding: 24px;
 
+  background: var(--poco-card);
 
-  .pot-card__overview {
-    grid-template-columns:
-      1fr;
-  }
+  border: 1px solid #ddd7ca;
+  border-radius: 5px;
 
-
-  .plant-panel,
-  .decision-panel {
-    min-height:
-      auto;
-  }
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.18);
 }
 
 
-/* =========================================================
-   TÉLÉPHONE
-========================================================= */
+.modal__content h2 {
+  margin: 0 0 5px;
 
-@media (max-width: 600px) {
-
-  /* -----------------------------------------------------
-     HEADER
-  ----------------------------------------------------- */
-
-  header {
-    min-height:
-      auto;
-
-    padding:
-      16px 18px;
-
-    flex-direction:
-      column;
-
-    align-items:
-      stretch;
-
-    gap:
-      10px;
-  }
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  font-weight: 400;
+}
 
 
-  header h1 {
-    font-size:
-      24px;
-  }
+#wifi-pot-name {
+  margin: 0 0 18px;
+
+  color: var(--poco-muted);
+  font-size: 11px;
+}
 
 
-  #user-email {
-    margin:
-      0;
+.modal__content label {
+  display: block;
 
-    overflow-wrap:
-      anywhere;
-  }
+  margin: 11px 0 5px;
 
-
-  #logout-button {
-    width:
-      100%;
-  }
+  font-size: 11px;
+  font-weight: 600;
+}
 
 
-  /* -----------------------------------------------------
-     MAIN
-  ----------------------------------------------------- */
+.modal__content input,
+.modal__content select {
+  box-sizing: border-box;
 
+  width: 100%;
+  height: 36px;
+
+  padding: 0 9px;
+
+  background: white;
+
+  border: 1px solid #bdbdbd;
+  border-radius: 3px;
+
+  font-size: 12px;
+}
+
+
+.modal__content input:focus,
+.modal__content select:focus {
+  outline: none;
+  border-color: var(--poco-green);
+}
+
+
+#send-wifi-button {
+  width: 100%;
+
+  margin-top: 17px;
+  padding: 10px;
+
+  border: none;
+  border-radius: 3px;
+
+  background: var(--poco-green);
+  color: white;
+
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+
+#send-wifi-button:hover {
+  background: var(--poco-green-dark);
+}
+
+
+.modal__close {
+  position: absolute;
+
+  top: 9px;
+  right: 11px;
+
+  width: 28px;
+  height: 28px;
+
+  padding: 0;
+
+  background: transparent;
+  border: none;
+
+  color: #777;
+
+  font-size: 20px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+
+#wifi-status {
+  margin: 10px 0 0;
+
+  color: var(--poco-green-dark);
+
+  font-size: 11px;
+  text-align: center;
+}
+
+
+/* ======================================================
+   RESPONSIVE MOBILE
+   ====================================================== */
+
+@media (max-width: 700px) {
+
+  .dashboard__content,
   main {
-    width:
-      calc(100% - 24px);
-
-    margin:
-      22px auto 40px;
+    width: calc(100% - 20px);
+    padding-top: 12px;
   }
 
-
-  main > h2 {
-    font-size:
-      21px;
+  .dashboard__header {
+    padding: 0 15px;
   }
 
-
-  /* -----------------------------------------------------
-     CARTE
-  ----------------------------------------------------- */
-
-  .pot-card {
-    border-radius:
-      11px;
+  .dashboard__header h1 {
+    font-size: 24px;
   }
-
 
   .pot-card__header {
-    padding:
-      17px;
-
-    flex-direction:
-      column;
-
-    align-items:
-      flex-start;
-
-    gap:
-      5px;
+    padding: 12px 15px;
   }
 
+  .pot-card__title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
 
   .pot-card__title h2 {
-    font-size:
-      20px;
+    font-size: 23px;
   }
-
-
-  .pot-card__mac {
-    overflow-wrap:
-      anywhere;
-  }
-
-
-  /* -----------------------------------------------------
-     PANELS
-  ----------------------------------------------------- */
 
   .pot-card__overview {
-    padding:
-      16px;
+    grid-template-columns: 1fr;
 
-    grid-template-columns:
-      1fr;
-
-    gap:
-      14px;
+    padding: 12px;
   }
-
-
-  .panel {
-    padding:
-      17px;
-  }
-
-
-  .panel__title {
-    font-size:
-      17px;
-  }
-
-
-  .plant-name {
-    font-size:
-      19px;
-  }
-
-
-  /* -----------------------------------------------------
-     ANALYSE
-  ----------------------------------------------------- */
-
-  .analysis-row {
-    align-items:
-      flex-start;
-  }
-
-
-  .status {
-    text-align:
-      center;
-  }
-
-
-  /* -----------------------------------------------------
-     ACTIONS
-  ----------------------------------------------------- */
-
-  .pot-actions {
-    padding:
-      0 16px 18px;
-
-    display:
-      grid;
-
-    grid-template-columns:
-      1fr 1fr;
-
-    gap:
-      8px;
-  }
-
-
-  .pot-actions .button {
-    width:
-      100%;
-
-    padding:
-      10px 8px;
-  }
-
-
-  .action-error {
-    grid-column:
-      1 / -1;
-  }
-
-
-  /* -----------------------------------------------------
-     RECHERCHE
-  ----------------------------------------------------- */
 
   .species-search {
-    padding:
-      19px 16px 22px;
+    padding: 14px 12px;
   }
-
 
   .species-search__form {
-    flex-direction:
-      column;
+    align-items: stretch;
+    flex-direction: column;
   }
-
-
-  .species-search__input {
-    width:
-      100%;
-
-    min-height:
-      44px;
-  }
-
-
-  .button--search {
-    width:
-      100%;
-  }
-
-
-  /* -----------------------------------------------------
-     RÉSULTATS
-  ----------------------------------------------------- */
-
-  .species-result {
-    padding:
-      13px 0;
-
-    align-items:
-      flex-start;
-  }
-
-
-  .species-result__info {
-    flex:
-      1;
-  }
-
-
-  .button--small {
-    flex-shrink:
-      0;
-  }
-}
-
-
-/* =========================================================
-   TRÈS PETITS ÉCRANS
-========================================================= */
-
-@media (max-width: 390px) {
 
   .pot-actions {
-    grid-template-columns:
-      1fr;
+    padding: 0 12px 14px;
+    flex-wrap: wrap;
   }
 
-
-  .species-result {
-    flex-direction:
-      column;
-
-    gap:
-      8px;
-  }
-
-
-  .species-result .button {
-    width:
-      100%;
-  }
-
-
-  .analysis-row {
-    flex-direction:
-      column;
-
-    gap:
-      5px;
+  .modal__content {
+    width: calc(100% - 30px);
   }
 }
