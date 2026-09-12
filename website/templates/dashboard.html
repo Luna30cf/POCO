@@ -2,103 +2,254 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-  <title>Dashboard - POCO</title>
+  <title>Mes plantes - POCO</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="/css/dashboard.css">
+
+  <link
+    rel="stylesheet"
+    href="/css/dashboard.css"
+  >
 </head>
 
 <body>
 
-  <h1>Dashboard POCO 🌱</h1>
+  <!-- ==================================================
+       HEADER
+       ================================================== -->
 
-  <p id="user-email"></p>
+  <header class="app-header">
 
-  <h2>Mes pots</h2>
-
-  <button id="add-pot-button" type="button">
-    + Ajouter un pot
-  </button>
-
-  <p id="bluetooth-status"></p>
-
-  <div id="pots-container">
-    <p>Chargement des pots...</p>
-  </div>
-
-  <button id="logout-button">
-    Se déconnecter
-  </button>
-
-  <div id="wifi-modal" class="modal" hidden>
-
-  <div class="modal__content">
-
-    <button
-      id="wifi-modal-close"
-      class="modal__close"
-      type="button"
-      aria-label="Fermer"
+    <a
+      href="/dashboard"
+      class="app-header__brand"
+      aria-label="Accueil POCO"
     >
-      ×
-    </button>
+      <span class="app-header__logo">
+        POCO
+      </span>
+    </a>
 
-    <h2>Configuration Wi-Fi</h2>
 
-    <p id="wifi-pot-name"></p>
+    <div class="app-header__account">
 
-    <label for="wifi-ssid">
-      Nom du réseau Wi-Fi
-    </label>
+      <p
+        id="user-email"
+        class="app-header__email"
+      ></p>
 
-    <input
-      id="wifi-ssid"
-      type="text"
-      placeholder="SSID"
-    >
-
-    <label for="wifi-security">
-      Sécurité
-    </label>
-
-    <select id="wifi-security">
-      <option value="password">
-        Réseau protégé
-      </option>
-
-      <option value="open">
-        Réseau ouvert
-      </option>
-    </select>
-
-    <div id="wifi-password-container">
-
-      <label for="wifi-password">
-        Mot de passe
-      </label>
-
-      <input
-        id="wifi-password"
-        type="password"
-        placeholder="Mot de passe Wi-Fi"
+      <button
+        id="logout-button"
+        class="logout-button"
+        type="button"
       >
+        Se déconnecter
+      </button>
 
     </div>
 
+  </header>
+
+
+  <!-- ==================================================
+       CONTENU
+       ================================================== -->
+
+  <main class="dashboard">
+
+    <!-- ----------------------------------------------
+         TITRE + AJOUT POT
+         ---------------------------------------------- -->
+
+    <section class="plants-heading">
+
+      <div>
+
+        <p class="plants-heading__eyebrow">
+          POCO
+        </p>
+
+        <h1>
+          Mes plantes
+        </h1>
+
+        <p class="plants-heading__intro">
+          Retrouve tes plantes connectées et leur état.
+        </p>
+
+      </div>
+
+
+      <button
+        id="add-pot-button"
+        class="add-pot-button"
+        type="button"
+      >
+        <span
+          class="add-pot-button__icon"
+          aria-hidden="true"
+        >
+          +
+        </span>
+
+        Ajouter un pot
+      </button>
+
+    </section>
+
+
+    <!-- ----------------------------------------------
+         ÉTAT BLUETOOTH
+         ---------------------------------------------- -->
+
+    <p
+      id="bluetooth-status"
+      class="bluetooth-status"
+      aria-live="polite"
+    ></p>
+
+
+    <!-- ----------------------------------------------
+         LISTE DES POTS / PLANTES
+         Remplie par dashboard.js
+         ---------------------------------------------- -->
+
+    <section
+      id="pots-container"
+      class="plants-grid"
+      aria-live="polite"
+    >
+
+      <p class="loading">
+        Chargement de tes plantes...
+      </p>
+
+    </section>
+
+  </main>
+
+
+  <!-- ==================================================
+       MODALE CONFIGURATION WI-FI
+       ================================================== -->
+
+  <div
+    id="wifi-modal"
+    class="modal"
+    hidden
+  >
+
+    <div
+      class="modal__content"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="wifi-modal-title"
+    >
+
+      <button
+        id="wifi-modal-close"
+        class="modal__close"
+        type="button"
+        aria-label="Fermer"
+      >
+        ×
+      </button>
+
+
+      <p class="modal__eyebrow">
+        POCO
+      </p>
+
+      <h2 id="wifi-modal-title">
+        Configuration Wi-Fi
+      </h2>
+
+      <p
+        id="wifi-pot-name"
+        class="modal__pot-name"
+      ></p>
+
+
+      <div class="form-field">
+
+        <label for="wifi-ssid">
+          Nom du réseau Wi-Fi
+        </label>
+
+        <input
+          id="wifi-ssid"
+          type="text"
+          placeholder="Ex. MaBoxWiFi"
+          autocomplete="off"
+        >
+
+      </div>
+
+
+      <div class="form-field">
+
+        <label for="wifi-security">
+          Sécurité
+        </label>
+
+        <select id="wifi-security">
+
+          <option value="password">
+            Réseau protégé
+          </option>
+
+          <option value="open">
+            Réseau ouvert
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div
+        id="wifi-password-container"
+        class="form-field"
+      >
+
+        <label for="wifi-password">
+          Mot de passe
+        </label>
+
+        <input
+          id="wifi-password"
+          type="password"
+          placeholder="Mot de passe Wi-Fi"
+          autocomplete="current-password"
+        >
+
+      </div>
+
+
       <button
         id="send-wifi-button"
+        class="wifi-submit-button"
         type="button"
       >
         Connecter au Wi-Fi
       </button>
 
-      <p id="wifi-status"></p>
+
+      <p
+        id="wifi-status"
+        class="wifi-status"
+        aria-live="polite"
+      ></p>
 
     </div>
 
-    </div>
+  </div>
+
 
   <script src="/pages/dashboard.js"></script>
 
