@@ -3,34 +3,60 @@ const path = require("path");
 
 const router = express.Router();
 
-// Page d'accueil
+
+// PAGE DE CONNEXION
 router.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../templates/login.html"));
-});
-
-// Dashboard
-router.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "../templates/dashboard.html"));
-});
-
-//Login
-router.get("/login", (req, res) => {
   res.sendFile(
-    path.join(__dirname, "../templates/login.html")
+    path.join(
+      __dirname,
+      "../templates/login.html"
+    )
   );
 });
 
-router.get(
-  "/register",
-  (req, res) => {
 
-    res.sendFile(
-      path.join(
-        __dirname,
-        "../templates/register.html"
-      )
-    );
-  }
-);
+// MES PLANTES
+router.get("/mes-plantes", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "../templates/index.html"
+    )
+  );
+});
+
+
+// DASHBOARD D'UN POT
+router.get("/dashboard/:potId", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "../templates/dashboard.html"
+    )
+  );
+});
+
+
+// LOGIN
+router.get("/login", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "../templates/login.html"
+    )
+  );
+});
+
+
+// REGISTER
+router.get("/register", (req, res) => {
+  res.sendFile(
+    path.join(
+      __dirname,
+      "../templates/register.html"
+    )
+  );
+});
+
 
 module.exports = router;

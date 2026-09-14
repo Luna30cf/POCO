@@ -9,68 +9,58 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>POCO</title>
+  <title>Mes plantes - POCO</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <link
     rel="stylesheet"
-    href="/css/dashboard.css?v=3"
+    href="/css/home.css"
   >
 </head>
 
 <body>
 
-  <header class="app-header">
+  <header class="plants-header">
 
-    <a
-      href="/mes-plantes"
-      class="app-header__logo"
-      aria-label="Retour à mes plantes"
-    >
+    <div class="plants-header__logo">
       <img
         src="/images/logo-poco.svg"
         alt="POCO"
       >
-    </a>
+    </div>
 
-
+    <h1>Mes plantes</h1>
 
     <button
       id="logout-button"
-      class="profile-button"
       type="button"
       aria-label="Se déconnecter"
-    > Se déconnecter
-      
-     
+    >
+      <img
+        src="/images/user.png"
+        alt=""
+      >
     </button>
-    
+
   </header>
 
 
-  <!-- Gardé pour le JS, mais pas affiché -->
-  <p
-    id="user-email"
-    hidden
-  ></p>
+  <main class="plants-page">
 
+    <p id="bluetooth-status"></p>
 
-  <p
-    id="bluetooth-status"
-    class="bluetooth-status"
-  ></p>
+    <section
+      id="plants-container"
+      class="plants-grid"
+    >
+      <p>Chargement de vos plantes...</p>
+    </section>
 
-
-  <main
-    id="pots-container"
-    class="dashboard"
-  >
-    <p>Chargement du pot...</p>
   </main>
 
 
-  <!-- POPUP WI-FI -->
+  <!-- POPUP CONFIGURATION WI-FI -->
 
   <div
     id="wifi-modal"
@@ -89,14 +79,9 @@
         ×
       </button>
 
-
-      <h2>
-        Configuration Wi-Fi
-      </h2>
-
+      <h2>Configuration Wi-Fi</h2>
 
       <p id="wifi-pot-name"></p>
-
 
       <label for="wifi-ssid">
         Nom du réseau Wi-Fi
@@ -148,7 +133,6 @@
         Connecter au Wi-Fi
       </button>
 
-
       <p id="wifi-status"></p>
 
     </div>
@@ -156,7 +140,7 @@
   </div>
 
 
-  <script src="/pages/dashboard.js"></script>
+  <script src="/pages/mes-plantes.js"></script>
 
 </body>
 

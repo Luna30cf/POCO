@@ -73,12 +73,42 @@ async function loadDashboard() {
     return;
   }
 
+  // ======================================================
+  // POT SÉLECTIONNÉ DANS L'URL
+  // ======================================================
+
+  const pathParts =
+    window.location.pathname.split("/");
+
+  const selectedPotId =
+    pathParts[pathParts.length - 1];
+
+  const selectedPot =
+    pots.find(
+      (pot) =>
+        String(pot.id) ===
+        String(selectedPotId)
+    );
+
+
+  if (!selectedPot) {
+    container.textContent =
+      "Ce pot est introuvable ou n'appartient pas à ce compte.";
+    return;
+  }
+
+
+  // Le dashboard ne travaille maintenant
+  // que sur le pot sélectionné.
+  const dashboardPots =
+    [selectedPot];
+
 
   // ==================================================
   // UNE CARTE PAR POT
   // ==================================================
 
-  for (const pot of pots) {
+  for (const pot of dashboardPots) {
 
     // ==================================================
     // CARTE PRINCIPALE
@@ -232,6 +262,9 @@ async function loadDashboard() {
           wifiModal.hidden =
             false;
 
+          bluetoothStatus.textContent =
+            "";
+
 
         } catch (error) {
 
@@ -269,7 +302,7 @@ async function loadDashboard() {
       createElement(
         "h3",
         "panel__title",
-        "🌱 Ma plante"
+        "Ma plante"
       );
 
     const plantName =
@@ -303,7 +336,7 @@ async function loadDashboard() {
 
     decisionPanel.innerHTML = `
       <h3 class="panel__title">
-        🧠 Analyse POCO
+        Analyse POCO
       </h3>
 
       <p class="loading">
@@ -331,14 +364,14 @@ async function loadDashboard() {
       createElement(
         "button",
         "button button--primary",
-        "💧 Arroser"
+        "Arroser"
       );
 
     const ledButton =
       createElement(
         "button",
         "button button--secondary",
-        "💡 Allumer LED"
+        "Allumer LED"
       );
 
     let ledIsOn = false;
@@ -363,7 +396,7 @@ async function loadDashboard() {
       createElement(
         "h3",
         "panel__title",
-        "🔎 Rechercher une espèce"
+        "Rechercher une espèce"
       );
 
     const searchHelp =
@@ -553,11 +586,11 @@ async function loadDashboard() {
 
         decisionPanel.innerHTML = `
           <h3 class="panel__title">
-            🧠 Analyse POCO
+            Analyse POCO
           </h3>
 
           <div class="analysis-row">
-            <span>💧 Humidité</span>
+            <span>Humidité</span>
 
             <span class="${soilClass}">
               ${soilStatus}
@@ -581,7 +614,7 @@ async function loadDashboard() {
           }
 
           <div class="analysis-row">
-            <span>☀️ Luminosité</span>
+            <span>Luminosité</span>
 
             <span class="${lightClass}">
               ${lightStatus}
@@ -605,7 +638,7 @@ async function loadDashboard() {
           }
 
           <div class="analysis-row">
-            <span>🚰 Réservoir</span>
+            <span>Réservoir</span>
 
             <span class="${waterClass}">
               ${waterStatus}
@@ -621,7 +654,7 @@ async function loadDashboard() {
 
         decisionPanel.innerHTML = `
           <h3 class="panel__title">
-            🧠 Analyse POCO
+            Analyse POCO
           </h3>
 
           <p>
@@ -913,7 +946,7 @@ async function loadDashboard() {
               message.remove();
 
               waterButton.textContent =
-                "💧 Arroser";
+                "Arroser";
 
               waterButton.disabled =
                 false;
@@ -930,7 +963,7 @@ async function loadDashboard() {
 
           setTimeout(() => {
             waterButton.textContent =
-              "💧 Arroser";
+              "Arroser";
 
             waterButton.disabled =
               false;
@@ -950,7 +983,7 @@ async function loadDashboard() {
 
           setTimeout(() => {
             waterButton.textContent =
-              "💧 Arroser";
+              "Arroser";
 
             waterButton.disabled =
               false;
@@ -1010,8 +1043,8 @@ async function loadDashboard() {
 
           ledButton.textContent =
             ledIsOn
-              ? "💡 Éteindre LED"
-              : "💡 Allumer LED";
+              ? "Éteindre LED"
+              : "Allumer LED";
 
 
         } catch (error) {
@@ -1109,12 +1142,9 @@ document
     }
   );
 
-  // ======================================================
-// AJOUT D'UN POT - DÉTECTION BLUETOOTH
 // ======================================================
-
-const addPotButton =
-  document.getElementById("add-pot-button");
+// ÉLÉMENTS BLUETOOTH / WI-FI
+// ======================================================
 
 const bluetoothStatus =
   document.getElementById("bluetooth-status");
@@ -1129,88 +1159,11 @@ const wifiPotName =
   document.getElementById("wifi-pot-name");
 
 
-addPotButton.addEventListener(
-  "click",
-  async () => {
-
-    // Web Bluetooth n'est pas disponible
-    // dans tous les navigateurs.
-    if (!navigator.bluetooth) {
-      bluetoothStatus.textContent =
-        "Bluetooth non disponible dans ce navigateur.";
-      return;
-    }
-
-    bluetoothStatus.textContent =
-      "Recherche d'un pot POCO...";
-
-    try {
-      wifiConfigurationMode = "add";
-
-      const POCO_SERVICE_UUID =
-        "12345678-1234-5678-1234-56789abcdef0";
-
-      const device =
-        await navigator.bluetooth.requestDevice({
-          filters: [
-            {
-              namePrefix: "poco-",
-            },
-          ],
-
-          optionalServices: [
-            POCO_SERVICE_UUID,
-          ],
-        });
-
-      bluetoothStatus.textContent =
-        `Connexion à ${device.name}...`;
-
-      const server =
-        await device.gatt.connect();
-
-      console.log(
-        "Connexion GATT réussie :",
-        server
-      );
-
-      const service =
-        await server.getPrimaryService(
-          POCO_SERVICE_UUID
-        );
-
-      currentPocoService = service;
-
-      console.log(
-        "Service POCO trouvé :",
-        service
-      );
-
-      bluetoothStatus.textContent =
-        `Connecté à ${device.name} ✓`;
-      
-      wifiPotName.textContent =
-        device.name;
-
-      wifiModal.hidden = false;
-
-    } catch (error) {
-
-      console.error(
-        "Recherche Bluetooth interrompue :",
-        error
-      );
-
-      bluetoothStatus.textContent =
-        "Aucun pot sélectionné.";
-    }
-  }
-);
-
 wifiModalClose.addEventListener(
   "click",
   () => {
     wifiModal.hidden = true;
+    bluetoothStatus.textContent = "";
   }
 );
 
@@ -1249,7 +1202,7 @@ const wifiStatus =
 
 let currentPocoService = null;
 
-let wifiConfigurationMode = "add";
+let wifiConfigurationMode = "change";
 
 
 // Cache le mot de passe pour un réseau ouvert

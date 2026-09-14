@@ -3,6 +3,7 @@ const express = require("express");
 const {
   getPots,
   associatePot,
+  startProvisioning,
 } = require("../controller/pots.controller");
 
 const {
@@ -21,6 +22,12 @@ router.post(
   "/associate",
   authenticateUser,
   associatePot
+);
+
+router.post(
+  "/:potId/provisioning",
+  authenticateUser,
+  startProvisioning
 );
 
 module.exports = router;

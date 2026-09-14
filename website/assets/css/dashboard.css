@@ -1,287 +1,548 @@
 /* ======================================================
-   POCO - DIRECTION ARTISTIQUE DASHBOARD
-   Basée sur la maquette
+   POCO - DASHBOARD D'UNE PLANTE
    ====================================================== */
 
-:root {
-  --poco-bg: #f8f6ed;
-  --poco-header: #d4cbb8;
-  --poco-green: #4f956d;
-  --poco-green-dark: #3f7f5b;
-  --poco-green-light: #dcebdd;
-
-  --poco-purple: #cbb8ef;
-  --poco-purple-light: #f1ebfb;
-
-  --poco-card: #fffef9;
-  --poco-grey: #d7d7d7;
-
-  --poco-text: #222222;
-  --poco-muted: #77736b;
-
-  --poco-danger: #d26c6c;
-  --poco-warning: #c89a3d;
-
-  --poco-radius: 6px;
+* {
+  box-sizing: border-box;
 }
 
-
-/* ======================================================
-   PAGE
-   ====================================================== */
-
+html,
 body {
   margin: 0;
-  background: var(--poco-bg);
-  color: var(--poco-text);
-  font-family: Arial, sans-serif;
+  min-height: 100%;
 }
 
-.dashboard {
-  width: 100%;
-  min-height: 100vh;
-  background: var(--poco-bg);
+body {
+  min-height: 100dvh;
+  padding-bottom: 0;
+
+  background: #f7f4ea;
+
+  color: #46423d;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 }
 
 
 /* ======================================================
-   HEADER PRINCIPAL
+   EN-TÊTE GLOBAL
    ====================================================== */
 
-.dashboard__header,
-header {
-  background: var(--poco-header);
-}
-
-.dashboard__header {
-  min-height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-}
-
-.dashboard__header h1 {
+body > h1 {
   margin: 0;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 32px;
+
+  padding:
+    clamp(18px, 3vh, 28px)
+    clamp(120px, 12vw, 170px)
+    clamp(5px, 1vh, 8px);
+
+  background: #d8cfbd;
+
+  text-align: center;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(2rem, 4vw, 3.1rem);
+
   font-weight: 400;
+
+  color: #4e4942;
+}
+
+
+.app-header__logo img {
+  width:
+    clamp(95px, 8vw, 130px);
+
+  height:
+    clamp(95px, 8vw, 130px);
+
+  display: block;
+
+  margin-top:
+    clamp(-20px, -2vh, -10px);
+}
+
+
+#user-email {
+  margin: 0;
+
+  padding:
+    0
+    clamp(120px, 12vw, 170px)
+    clamp(14px, 2.5vh, 25px);
+
+  background: #d8cfbd;
+
+  text-align: center;
+
+  font-size: 0.85rem;
+
+  color: #756e64;
+}
+
+
+body > h2 {
+  display: none;
 }
 
 
 /* ======================================================
-   CONTENU
+   DÉCONNEXION
    ====================================================== */
 
-.dashboard__content,
-main {
-  width: min(1100px, calc(100% - 40px));
-  margin: 0 auto;
-  padding: 24px 0 60px;
+#logout-button {
+  position: absolute;
+
+  top:
+    clamp(14px, 2.5vh, 22px);
+
+  right:
+    clamp(20px, 2.5vw, 34px);
+
+  min-height:
+    clamp(36px, 5vh, 42px);
+
+  padding:
+    0
+    clamp(12px, 1.5vw, 18px);
+
+  border:
+    1px solid rgba(77, 70, 61, 0.15);
+
+  border-radius: 999px;
+
+  background:
+    rgba(255, 255, 255, 0.55);
+
+  color: #59534c;
+
+  font: inherit;
+
+  font-size: 0.85rem;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+
+#logout-button:hover {
+  transform: translateY(-2px);
+
+  background:
+    rgba(255, 255, 255, 0.9);
 }
 
 
 /* ======================================================
-   CARTE POT
+   BLUETOOTH
+   ====================================================== */
+
+#bluetooth-status {
+  width:
+    min(
+      1050px,
+      92vw
+    );
+
+  min-height:
+    clamp(
+      8px,
+      1.5vh,
+      20px
+    );
+
+  margin:
+    clamp(6px, 1.5vh, 18px)
+    auto
+    0;
+
+  text-align: center;
+
+  font-size: 0.88rem;
+
+  color: #777067;
+}
+
+
+/* ======================================================
+   CONTENEUR PRINCIPAL
+   ====================================================== */
+
+#pots-container {
+  width:
+    min(
+      1050px,
+      92vw
+    );
+
+  margin:
+    clamp(-60px, -6vh, -35px)
+    auto
+    0;
+}
+
+
+/* ======================================================
+   CARTE PRINCIPALE DU POT
    ====================================================== */
 
 .pot-card {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  margin-bottom: 32px;
+  overflow: hidden;
+
+  border:
+    1px solid rgba(96, 87, 75, 0.12);
+
+  border-radius:
+    clamp(18px, 2vw, 26px);
+
+  background: #fffdf8;
+
+  box-shadow:
+    0
+    18px
+    45px
+    rgba(69, 62, 54, 0.09);
 }
 
 
 /* ======================================================
-   NOM DU POT
+   HEADER DU POT
    ====================================================== */
 
 .pot-card__header {
-  background: var(--poco-header);
-  min-height: 64px;
+  padding:
+    clamp(14px, 2.5vh, 27px)
+    clamp(20px, 3vw, 32px)
+    clamp(12px, 2vh, 24px);
 
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
-  padding: 0 24px;
+  gap:
+    clamp(12px, 2vw, 20px);
 
-  border: none;
+  background: #eee8dc;
+
+  border-bottom:
+    1px solid rgba(95, 87, 76, 0.08);
 }
+
 
 .pot-card__title {
   display: flex;
+
   align-items: center;
-  gap: 16px;
+
+  gap:
+    clamp(10px, 1.5vw, 15px);
+
+  flex-wrap: wrap;
 }
+
 
 .pot-card__title h2 {
   margin: 0;
 
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 30px;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(1.5rem, 3vw, 2.35rem);
+
   font-weight: 400;
+
+  color: #4d4842;
 }
 
+
 .pot-card__mac {
-  font-size: 12px;
-  color: var(--poco-muted);
+  font-size:
+    clamp(0.7rem, 1vw, 0.78rem);
+
+  color: #898176;
+
+  white-space: nowrap;
 }
 
 
 /* ======================================================
-   BOUTONS
+   BOUTONS GÉNÉRAUX
    ====================================================== */
 
 .button {
+  min-height:
+    clamp(
+      36px,
+      5vh,
+      43px
+    );
+
+  padding:
+    0
+    clamp(12px, 1.5vw, 18px);
+
   border: none;
-  border-radius: 4px;
 
-  padding: 9px 16px;
+  border-radius:
+    clamp(9px, 1vw, 12px);
 
-  font-size: 13px;
+  font: inherit;
+
+  font-size:
+    clamp(0.8rem, 1vw, 0.9rem);
+
   font-weight: 600;
 
   cursor: pointer;
 
   transition:
-    background 0.15s ease,
-    transform 0.15s ease;
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease,
+    opacity 0.18s ease;
 }
 
-.button:hover {
-  transform: translateY(-1px);
+
+.button:hover:not(:disabled) {
+  transform: translateY(-2px);
 }
+
 
 .button:disabled {
-  cursor: not-allowed;
   opacity: 0.55;
-  transform: none;
+
+  cursor: wait;
 }
 
 
-.button--primary,
-.button--search {
-  background: var(--poco-green);
-  color: white;
-}
-
-.button--primary:hover,
-.button--search:hover {
-  background: var(--poco-green-dark);
-}
-
-
-.button--secondary {
-  background: white;
-  color: var(--poco-green);
-  border: 1px solid var(--poco-green);
-}
-
+/* PETIT BOUTON */
 
 .button--small {
-  padding: 6px 11px;
+  min-height:
+    clamp(32px, 4vh, 36px);
 
-  background: var(--poco-green);
+  padding:
+    0
+    clamp(10px, 1vw, 13px);
+
+  border:
+    1px solid #6c9f7a;
+
+  background: transparent;
+
+  color: #538264;
+
+  font-size:
+    clamp(0.72rem, 0.9vw, 0.8rem);
+}
+
+
+.button--small:hover:not(:disabled) {
+  background:
+    rgba(95, 152, 114, 0.1);
+}
+
+
+/* ARROSAGE */
+
+.button--primary {
+  background: #5f9872;
+
+  color: #ffffff;
+
+  box-shadow:
+    0
+    7px
+    18px
+    rgba(95, 152, 114, 0.18);
+}
+
+
+.button--primary:hover:not(:disabled) {
+  background: #518663;
+}
+
+
+/* LED */
+
+.button--secondary {
+  background: #bfa6f0;
+
+  color: #ffffff;
+
+  box-shadow:
+    0
+    7px
+    18px
+    rgba(170, 142, 220, 0.15);
+}
+
+
+.button--secondary:hover:not(:disabled) {
+  background: #a887e4;
+}
+
+
+/* RECHERCHE */
+
+.button--search {
+  background: #5f9872;
+
   color: white;
+}
 
-  font-size: 11px;
+
+.button--search:hover:not(:disabled) {
+  background: #518663;
 }
 
 
 /* ======================================================
-   RECHERCHE ESPÈCE
-   ====================================================== */
-
-.species-search {
-  background: var(--poco-card);
-
-  padding: 18px 22px;
-
-  border-bottom:
-    1px solid #ebe7dd;
-}
-
-.species-search__form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  max-width: 500px;
-}
-
-.species-search__input {
-  flex: 1;
-
-  height: 36px;
-
-  padding: 0 10px;
-
-  border: 1px solid #b9b9b9;
-  border-radius: 3px;
-
-  background: white;
-}
-
-.species-search__input:focus {
-  outline: none;
-  border-color: var(--poco-green);
-}
-
-.species-search__help {
-  margin: 3px 0 10px;
-
-  color: var(--poco-muted);
-  font-size: 11px;
-}
-
-
-/* ======================================================
-   PANNEAUX PLANTE + ANALYSE
+   ZONE PLANTE + ANALYSE
    ====================================================== */
 
 .pot-card__overview {
+  padding:
+    clamp(8px, 1.5vh, 15px)
+    clamp(20px, 3vw, 32px);
+
   display: grid;
-  grid-template-columns: 1fr 1fr;
 
-  gap: 14px;
+  grid-template-columns:
+    minmax(0, 0.85fr)
+    minmax(0, 1.15fr);
 
-  padding: 18px 22px;
-
-  background: var(--poco-card);
+  gap:
+    clamp(14px, 2vw, 25px);
 }
+
+
+/* ======================================================
+   PANELS
+   ====================================================== */
 
 .panel {
-  min-height: 145px;
+  padding:
+    clamp(15px, 2.5vh, 26px);
 
-  padding: 16px;
+  border:
+    1px solid rgba(92, 84, 73, 0.1);
 
-  background: #fafafa;
+  border-radius:
+    clamp(14px, 1.5vw, 20px);
 
-  border: 1px solid #e1ddd3;
-  border-radius: var(--poco-radius);
+  background: #faf7ef;
 }
+
 
 .panel__title {
-  margin: 0 0 12px;
+  margin:
+    0
+    0
+    clamp(10px, 2vh, 21px);
 
-  font-size: 14px;
-  font-weight: 600;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(
+      1.05rem,
+      2vh,
+      1.35rem
+    );
+
+  font-weight: 400;
+
+  color: #504b44;
 }
+
+
+/* ======================================================
+   PLANTE
+   ====================================================== */
+
+.plant-panel {
+  position: relative;
+
+  overflow: hidden;
+
+  min-height:
+    clamp(
+      165px,
+      25vh,
+      230px
+    );
+
+  background:
+    linear-gradient(
+      145deg,
+      #f1eee3,
+      #fbf8f1
+    );
+}
+
 
 .plant-name {
-  margin: 8px 0 3px;
+  position: relative;
 
-  font-size: 17px;
-  font-weight: 600;
+  z-index: 1;
+
+  margin:
+    clamp(15px, 4vh, 35px)
+    0
+    7px;
+
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(
+      1.35rem,
+      2.5vh,
+      1.7rem
+    );
+
+  color: #4c554b;
 }
 
+
 .species-name {
+  position: relative;
+
+  z-index: 1;
+
+  max-width: 85%;
+
   margin: 0;
 
-  color: var(--poco-muted);
-  font-size: 12px;
+  color: #7a746b;
+
+  font-size:
+    clamp(0.78rem, 1.4vh, 0.9rem);
+
+  font-style: italic;
+
+  line-height: 1.5;
 }
 
 
@@ -289,47 +550,115 @@ main {
    ANALYSE POCO
    ====================================================== */
 
+.decision-panel {
+  background: #fffdf9;
+}
+
+
 .analysis-row {
+  padding:
+    clamp(
+      7px,
+      1.4vh,
+      13px
+    )
+    0;
+
   display: flex;
-  align-items: center;
+
   justify-content: space-between;
 
-  margin: 8px 0 2px;
+  align-items: center;
 
-  font-size: 12px;
+  gap: 15px;
+
+  border-bottom:
+    1px solid #eee9df;
 }
+
+
+.analysis-row > span:first-child {
+  font-weight: 600;
+
+  color: #59544d;
+}
+
 
 .analysis-detail {
-  margin: 0 0 6px;
+  margin:
+    clamp(4px, 0.7vh, 7px)
+    0
+    clamp(7px, 1.3vh, 12px);
 
-  color: var(--poco-muted);
-  font-size: 10px;
+  font-size:
+    clamp(0.74rem, 1.2vh, 0.82rem);
+
+  color: #8a837a;
 }
+
 
 .status {
-  font-size: 10px;
-  font-weight: 600;
+  padding:
+    clamp(4px, 0.7vh, 6px)
+    clamp(8px, 0.9vw, 10px);
+
+  border-radius: 999px;
+
+  font-size:
+    clamp(0.68rem, 1vh, 0.76rem);
+
+  font-weight: 700;
 }
+
 
 .status--ok {
-  color: var(--poco-green);
+  background:
+    rgba(101, 160, 117, 0.14);
+
+  color: #4d805c;
 }
+
 
 .status--warning {
-  color: var(--poco-warning);
+  background:
+    rgba(194, 157, 74, 0.15);
+
+  color: #917329;
 }
+
 
 .status--danger {
-  color: var(--poco-danger);
+  background:
+    rgba(185, 91, 91, 0.12);
+
+  color: #a14f4f;
 }
 
+
 .recommendation {
-  margin: 3px 0 7px;
+  margin:
+    -3px
+    0
+    clamp(6px, 1.2vh, 12px);
 
-  color: var(--poco-warning);
+  padding:
+    clamp(6px, 1vh, 9px)
+    11px;
 
-  font-size: 10px;
-  font-weight: 600;
+  border-radius: 9px;
+
+  background:
+    rgba(200, 180, 239, 0.13);
+
+  color: #665879;
+
+  font-size:
+    clamp(0.73rem, 1.2vh, 0.81rem);
+}
+
+
+.loading {
+  color: #857e75;
 }
 
 
@@ -338,12 +667,126 @@ main {
    ====================================================== */
 
 .pot-actions {
+  padding:
+    0
+    clamp(20px, 3vw, 32px)
+    clamp(8px, 1.5vh, 15px);
+
   display: flex;
-  gap: 10px;
 
-  padding: 0 22px 18px;
+  gap:
+    clamp(8px, 1vw, 12px);
 
-  background: var(--poco-card);
+  justify-content: flex-end;
+
+  flex-wrap: wrap;
+}
+
+
+.action-error {
+  flex-basis: 100%;
+
+  margin:
+    8px 0 0;
+
+  text-align: right;
+
+  color: #a14f4f;
+
+  font-size: 0.83rem;
+}
+
+
+/* ======================================================
+   RECHERCHE PERENUAL
+   ====================================================== */
+
+.species-search {
+  margin:
+    0
+    clamp(20px, 3vw, 32px)
+    clamp(14px, 3vh, 32px);
+
+  padding:
+    clamp(
+      14px,
+      2.5vh,
+      26px
+    );
+
+  border:
+    1px solid rgba(92, 84, 73, 0.1);
+
+  border-radius:
+    clamp(14px, 1.5vw, 20px);
+
+  background: #f5f1e7;
+}
+
+
+.species-search__help {
+  margin:
+    clamp(-10px, -1vh, -5px)
+    0
+    clamp(9px, 1.8vh, 18px);
+
+  color: #837c72;
+
+  font-size:
+    clamp(0.76rem, 1.2vh, 0.84rem);
+}
+
+
+.species-search__form {
+  display: grid;
+
+  grid-template-columns:
+    1fr
+    auto;
+
+  gap:
+    clamp(8px, 1vw, 10px);
+}
+
+
+.species-search__input {
+  width: 100%;
+
+  height:
+    clamp(
+      38px,
+      5vh,
+      45px
+    );
+
+  padding:
+    0
+    14px;
+
+  border:
+    1px solid #cec7bb;
+
+  border-radius: 12px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #46423d;
+
+  font: inherit;
+}
+
+
+.species-search__input:focus {
+  border-color: #6b9e78;
+
+  box-shadow:
+    0
+    0
+    0
+    3px
+    rgba(95, 152, 114, 0.12);
 }
 
 
@@ -352,47 +795,61 @@ main {
    ====================================================== */
 
 .species-results {
-  margin-top: 10px;
+  margin-top:
+    clamp(8px, 1.5vh, 15px);
 }
+
 
 .species-result {
+  padding:
+    clamp(8px, 1.5vh, 13px)
+    0;
+
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
-  padding: 9px 10px;
+  gap: 15px;
 
-  background: white;
-
-  border: 1px solid #e1ddd3;
-  border-radius: 4px;
-
-  margin-bottom: 6px;
+  border-bottom:
+    1px solid
+    rgba(102, 94, 83, 0.11);
 }
+
+
+.species-result:last-child {
+  border-bottom: none;
+}
+
 
 .species-result__info {
   display: flex;
+
   flex-direction: column;
-  gap: 2px;
+
+  gap: 3px;
 }
+
 
 .species-result__name {
-  font-size: 12px;
+  color: #504b44;
 }
 
+
 .species-result__scientific {
-  color: var(--poco-muted);
-  font-size: 10px;
+  font-size: 0.81rem;
+
+  font-style: italic;
+
+  color: #898278;
 }
 
 
 /* ======================================================
    MODALE WI-FI
    ====================================================== */
-
-.modal[hidden] {
-  display: none !important;
-}
 
 .modal {
   position: fixed;
@@ -401,96 +858,194 @@ main {
 
   z-index: 1000;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   padding: 20px;
 
-  background: rgba(30, 30, 30, 0.48);
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  background:
+    rgba(51, 47, 43, 0.55);
+
+  backdrop-filter: blur(3px);
+}
+
+
+.modal[hidden] {
+  display: none;
 }
 
 
 .modal__content {
   position: relative;
 
-  width: min(340px, calc(100% - 40px));
+  width:
+    min(
+      390px,
+      90vw
+    );
 
-  padding: 24px;
+  max-height:
+    90dvh;
 
-  background: var(--poco-card);
+  overflow-y: auto;
 
-  border: 1px solid #ddd7ca;
-  border-radius: 5px;
+  padding:
+    clamp(24px, 4vh, 34px);
+
+  border-radius: 22px;
+
+  background: #fffdf8;
 
   box-shadow:
-    0 10px 35px rgba(0, 0, 0, 0.18);
+    0
+    25px
+    65px
+    rgba(0, 0, 0, 0.23);
 }
 
 
 .modal__content h2 {
-  margin: 0 0 5px;
+  margin:
+    0
+    0
+    8px;
 
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 22px;
+  font-family:
+    Georgia,
+    "Times New Roman",
+    serif;
+
+  font-size:
+    clamp(1.45rem, 3vh, 1.75rem);
+
   font-weight: 400;
+
+  color: #4e4942;
 }
 
 
 #wifi-pot-name {
-  margin: 0 0 18px;
+  margin:
+    0
+    0
+    22px;
 
-  color: var(--poco-muted);
-  font-size: 11px;
+  color: #817a70;
+
+  font-size: 0.85rem;
 }
 
 
-.modal__content label {
+.modal__close {
+  position: absolute;
+
+  top: 14px;
+
+  right: 16px;
+
+  width: 38px;
+
+  height: 38px;
+
+  border: none;
+
+  border-radius: 50%;
+
+  background: transparent;
+
+  color: #6d665d;
+
+  font-size: 1.8rem;
+
+  cursor: pointer;
+}
+
+
+.modal__close:hover {
+  background: #f0ece3;
+}
+
+
+/* ======================================================
+   FORMULAIRE MODALE
+   ====================================================== */
+
+.modal label {
   display: block;
 
-  margin: 11px 0 5px;
+  margin:
+    15px
+    0
+    7px;
 
-  font-size: 11px;
+  font-size: 0.85rem;
+
   font-weight: 600;
+
+  color: #5a554e;
 }
 
 
-.modal__content input,
-.modal__content select {
-  box-sizing: border-box;
-
+.modal input,
+.modal select {
   width: 100%;
-  height: 36px;
 
-  padding: 0 9px;
+  height:
+    clamp(40px, 5vh, 46px);
+
+  padding:
+    0
+    13px;
+
+  border:
+    1px solid #cec8bd;
+
+  border-radius: 11px;
+
+  outline: none;
 
   background: white;
 
-  border: 1px solid #bdbdbd;
-  border-radius: 3px;
+  color: #423f3a;
 
-  font-size: 12px;
+  font: inherit;
 }
 
 
-.modal__content input:focus,
-.modal__content select:focus {
-  outline: none;
-  border-color: var(--poco-green);
+.modal input:focus,
+.modal select:focus {
+  border-color: #659a75;
+
+  box-shadow:
+    0
+    0
+    0
+    3px
+    rgba(95, 152, 114, 0.13);
 }
 
 
 #send-wifi-button {
   width: 100%;
 
-  margin-top: 17px;
-  padding: 10px;
+  min-height:
+    clamp(40px, 5vh, 47px);
+
+  margin-top:
+    clamp(16px, 2.5vh, 23px);
 
   border: none;
-  border-radius: 3px;
 
-  background: var(--poco-green);
+  border-radius: 12px;
+
+  background: #5f9872;
+
   color: white;
+
+  font: inherit;
 
   font-weight: 600;
 
@@ -499,98 +1054,267 @@ main {
 
 
 #send-wifi-button:hover {
-  background: var(--poco-green-dark);
-}
-
-
-.modal__close {
-  position: absolute;
-
-  top: 9px;
-  right: 11px;
-
-  width: 28px;
-  height: 28px;
-
-  padding: 0;
-
-  background: transparent;
-  border: none;
-
-  color: #777;
-
-  font-size: 20px;
-  line-height: 1;
-
-  cursor: pointer;
+  background: #518663;
 }
 
 
 #wifi-status {
-  margin: 10px 0 0;
+  min-height: 20px;
 
-  color: var(--poco-green-dark);
+  margin:
+    13px 0 0;
 
-  font-size: 11px;
   text-align: center;
+
+  color: #6e685f;
+
+  font-size: 0.85rem;
 }
 
 
 /* ======================================================
-   RESPONSIVE MOBILE
+   TABLETTE
    ====================================================== */
 
-@media (max-width: 700px) {
+@media (max-width: 800px) {
 
-  .dashboard__content,
-  main {
-    width: calc(100% - 20px);
-    padding-top: 12px;
+  body {
+    padding-bottom:
+      30px;
   }
 
-  .dashboard__header {
-    padding: 0 15px;
+
+  body > h1 {
+    padding-left:
+      110px;
+
+    padding-right:
+      110px;
   }
 
-  .dashboard__header h1 {
-    font-size: 24px;
+
+  #user-email {
+    padding-left:
+      110px;
+
+    padding-right:
+      110px;
   }
 
-  .pot-card__header {
-    padding: 12px 15px;
+
+  #pots-container {
+    width:
+      min(
+        94vw,
+        1050px
+      );
+
+    margin-top:
+      20px;
   }
 
-  .pot-card__title {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 7px;
-  }
-
-  .pot-card__title h2 {
-    font-size: 23px;
-  }
 
   .pot-card__overview {
-    grid-template-columns: 1fr;
+    grid-template-columns:
+      1fr;
 
-    padding: 12px;
+    gap:
+      18px;
   }
 
-  .species-search {
-    padding: 14px 12px;
+
+  .plant-panel {
+    min-height:
+      180px;
+  }
+}
+
+
+/* ======================================================
+   MOBILE
+   ====================================================== */
+
+@media (max-width: 600px) {
+
+  body {
+    padding-bottom:
+      25px;
   }
 
-  .species-search__form {
-    align-items: stretch;
-    flex-direction: column;
+
+  body > h1 {
+    padding:
+      22px
+      20px
+      5px;
+
+    font-size:
+      1.8rem;
   }
+
+
+  #user-email {
+    padding:
+      0
+      20px
+      18px;
+
+    font-size:
+      0.72rem;
+  }
+
+
+  #logout-button {
+    position: static;
+
+    display: block;
+
+    margin:
+      12px
+      auto
+      0;
+  }
+
+
+  #pots-container {
+    width:
+      94vw;
+
+    margin-top:
+      22px;
+  }
+
+
+  #bluetooth-status {
+    width:
+      94vw;
+  }
+
+
+  .pot-card {
+    border-radius:
+      20px;
+  }
+
+
+  .pot-card__header {
+    padding:
+      20px;
+
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+
+  .pot-card__title {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+
+  .pot-card__overview {
+    padding:
+      18px
+      20px
+      8px;
+
+    display:
+      grid;
+
+    grid-template-columns:
+      1fr;
+
+    gap:
+      18px;
+  }
+
+
+  .panel {
+    padding:
+      18px;
+  }
+
+
+  .plant-panel {
+    min-height:
+      170px;
+  }
+
 
   .pot-actions {
-    padding: 0 12px 14px;
-    flex-wrap: wrap;
+    padding:
+      4px
+      20px
+      8px;
+
+    display:
+      flex;
+
+    gap:
+      10px;
+
+    justify-content:
+      flex-end;
+
+    flex-wrap:
+      wrap;
   }
 
+
+  .button--primary,
+  .button--secondary {
+    width:
+      100%;
+  }
+
+
+  .species-search {
+    margin:
+      0
+      20px
+      20px;
+
+    padding:
+      18px;
+  }
+
+
+  .species-search__form {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .button--search {
+    width:
+      100%;
+  }
+
+
+  .species-result {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+
+  .species-result .button {
+    width:
+      100%;
+  }
+
+
   .modal__content {
-    width: calc(100% - 30px);
+    padding:
+      28px
+      20px;
   }
 }
