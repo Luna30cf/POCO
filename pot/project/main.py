@@ -322,9 +322,9 @@ def on_mqtt_message(topic, message):
         return
 
 client.set_callback(on_mqtt_message)
-client.subscribe(PUMP_TOPIC)
-client.subscribe(LED_TOPIC)
-client.subscribe(PROVISIONING_TOPIC)
+client.subscribe(PUMP_TOPIC, qos=1)
+client.subscribe(LED_TOPIC, qos=1)
+client.subscribe(PROVISIONING_TOPIC, qos=1)
 
 print("Abonné au topic pompe :", PUMP_TOPIC)
 print("Abonné au topic LED :", LED_TOPIC)
