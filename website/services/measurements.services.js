@@ -66,7 +66,7 @@ async function getLatestMeasurement(supabase, potId) {
 
 async function createMeasurementSnapshot(deviceId, values) {
   const pot = await getPotByDeviceId(deviceId);
-
+  
   // Dernière situation connue du pot
   const { data: previousMeasurement, error: previousError } =
     await supabaseAdmin
@@ -101,6 +101,11 @@ async function createMeasurementSnapshot(deviceId, values) {
       previousMeasurement?.water_level ??
       null,
   };
+
+  console.log(
+    "SNAPSHOT AVANT INSERT :",
+    measurement
+  );
 
   const { data, error } = await supabaseAdmin
     .from("measurements")

@@ -258,7 +258,7 @@ function publishMqttMessage(topic, payload) {
     mqttClient.publish(
       topic,
       message,
-      { qos: 0 },
+      { qos: 1 },
       (error) => {
 
         if (error) {
