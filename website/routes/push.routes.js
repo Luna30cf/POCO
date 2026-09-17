@@ -16,6 +16,11 @@ router.post(
   "/subscribe",
   authenticateUser,
   subscribePushController,
+);
+
+router.post(
+  "/test",
+  authenticateUser,
   testPushController
 );
 
