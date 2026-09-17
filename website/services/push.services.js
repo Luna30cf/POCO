@@ -31,6 +31,57 @@ async function sendPushNotification(subscription, notification) {
   }
 }
 
+async function savePushSubscription(
+  userId,
+  subscription
+) {
+  const supabaseAdmin =
+    require("../config/supabaseAdmin");
+
+  const subscriptionData =
+    subscription.keys;
+
+  if (
+    !userId ||
+    !subscription.endpoint ||
+    !subscriptionData?.p256dh ||
+    !subscriptionData?.auth
+  ) {
+    throw new Error(
+      "Abonnement Push invalide"
+    );
+  }
+
+  const {
+    data,
+    error,
+  } = await supabaseAdmin
+    .from("push_subscriptions")
+    .upsert(
+      {
+        user_id: userId,
+        endpoint: subscription.endpoint,
+        p256dh: subscriptionData.p256dh,
+        auth: subscriptionData.auth,
+        updated_at: new Date().toISOString(),
+      },
+      {
+        onConflict: "endpoint",
+      }
+    )
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(
+      `Impossible d'enregistrer l'abonnement Push : ${error.message}`
+    );
+  }
+
+  return data;
+}
+
 module.exports = {
   sendPushNotification,
+  savePushSubscription,
 };

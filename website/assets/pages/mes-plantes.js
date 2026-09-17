@@ -742,49 +742,75 @@ enableNotificationsButton.addEventListener(
         await navigator.serviceWorker.ready;
 
 
-      const existingSubscription =
+      let subscription =
         await registration.pushManager
           .getSubscription();
 
+      if (!subscription) {
 
-      if (existingSubscription) {
+        const VAPID_PUBLIC_KEY =
+          "BDTPUnUAbd3ZV7_EclUFkAU2geep1GBNQC8KJJcIjsfmqylK_qurEOq9NvUR4YUr2EQPoLZtZm7RRTUWpZQ-wnI";
 
-        console.log(
-          "Abonnement Push déjà existant :",
-          existingSubscription
-        );
+        subscription =
+          await registration.pushManager
+            .subscribe({
+              userVisibleOnly: true,
 
-        notificationStatus.textContent =
-          "Notifications déjà activées ✓";
-
-        return;
+              applicationServerKey:
+                urlBase64ToUint8Array(
+                  VAPID_PUBLIC_KEY
+                ),
+            });
       }
 
+      const {
+        data: { session },
+      } = await supabaseClient.auth
+        .getSession();
 
-      const VAPID_PUBLIC_KEY =
-        "BDTPUnUAbd3ZV7_EclUFkAU2geep1GBNQC8KJJcIjsfmqylK_qurEOq9NvUR4YUr2EQPoLZtZm7RRTUWpZQ-wnI";
+      if (!session) {
+        throw new Error(
+          "Utilisateur non authentifié"
+        );
+      }
 
+      const response = await fetch(
+        "/api/push/subscribe",
+        {
+          method: "POST",
 
-      const subscription =
-        await registration.pushManager
-          .subscribe({
-            userVisibleOnly: true,
+          headers: {
+            "Content-Type":
+              "application/json",
 
-            applicationServerKey:
-              urlBase64ToUint8Array(
-                VAPID_PUBLIC_KEY
-              ),
-          });
+            Authorization:
+              `Bearer ${session.access_token}`,
+          },
 
+          body: JSON.stringify(
+            subscription.toJSON()
+          ),
+        }
+      );
+
+      if (!response.ok) {
+
+        const errorData =
+          await response.json();
+
+        throw new Error(
+          errorData.error ||
+          "Impossible d'enregistrer l'abonnement Push"
+        );
+      }
 
       console.log(
-        "Abonnement Push POCO :",
-        subscription.toJSON()
+        "Abonnement Push enregistré côté POCO"
       );
 
 
       notificationStatus.textContent =
-        "Notifications activées ✓";
+        "Notifications activées";
 
     }
     catch (error) {
