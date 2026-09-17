@@ -1005,6 +1005,12 @@ body {
   display: none;
 }
 
+.notification-button--active {
+  background: rgba(95, 152, 114, 0.15);
+  border-color: var(--green);
+  color: var(--green-dark);
+}
+
 
 /* ======================================================
    TABLETTE

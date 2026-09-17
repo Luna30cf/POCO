@@ -812,7 +812,20 @@ enableNotificationsButton.addEventListener(
       notificationStatus.textContent =
         "Notifications activées";
 
+      enableNotificationsButton.classList.add(
+        "notification-button--active"
+      );
+
+      enableNotificationsButton.title =
+        "Notifications activées";
+
+      enableNotificationsButton.setAttribute(
+        "aria-label",
+        "Notifications activées"
+      );
+
     }
+
     catch (error) {
 
       console.error(
