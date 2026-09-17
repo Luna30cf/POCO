@@ -36,6 +36,36 @@
     <h1>Mes plantes</h1>
 
     <button
+      id="enable-notifications-button"
+      class="notification-button"
+      type="button"
+      aria-label="Activer les notifications"
+      title="Activer les notifications"
+    >
+      <svg
+        class="notification-button__icon"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path
+          d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+
+      
+    </button>
+
+    <p
+      id="notification-status"
+      class="notification-status"
+    ></p>
+
+    <button
       id="logout-button"
       class="logout-button"
       type="button"
@@ -64,16 +94,6 @@
 
   </header>
 
-  <div class="notification-settings">
-    <button
-      id="enable-notifications-button"
-      type="button"
-    >
-      🔔 Activer les notifications
-    </button>
-
-    <p id="notification-status"></p>
-  </div>
 
 
   <main class="plants-page">

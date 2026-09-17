@@ -943,6 +943,68 @@ body {
     0.85rem;
 }
 
+/* ======================================================
+   NOTIFICATIONS
+   ====================================================== */
+
+.notification-button {
+  position: absolute;
+
+  top:
+    clamp(
+      14px,
+      2.5vh,
+      22px
+    );
+
+  right: 200px;
+
+  width: 42px;
+  height: 42px;
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border:
+    1px solid
+    rgba(77, 70, 61, 0.15);
+
+  border-radius: 50%;
+
+  background:
+    rgba(255, 255, 255, 0.55);
+
+  color:
+    var(--green-dark);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.notification-button:hover {
+  transform:
+    translateY(-2px);
+
+  background:
+    rgba(255, 255, 255, 0.9);
+}
+
+.notification-button__icon {
+  width: 20px;
+  height: 20px;
+
+  flex-shrink: 0;
+}
+
+.notification-status {
+  display: none;
+}
+
 
 /* ======================================================
    TABLETTE
@@ -1087,5 +1149,22 @@ body {
   .plant-card img {
     height:
       180px;
+  }
+
+  .notification-button {
+    top: 14px;
+    right: 60px;
+
+    width: 40px;
+    height: 40px;
+  }
+
+  .notification-button__icon {
+    width: 21px;
+    height: 21px;
+  }
+
+  .notification-status {
+    display: none;
   }
 }

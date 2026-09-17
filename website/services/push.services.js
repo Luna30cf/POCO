@@ -1,5 +1,6 @@
 const webpush = require("web-push");
 
+
 webpush.setVapidDetails(
   "mailto:poco@example.com",
   process.env.VAPID_PUBLIC_KEY,
