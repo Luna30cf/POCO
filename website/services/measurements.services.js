@@ -119,7 +119,12 @@ async function createMeasurementSnapshot(deviceId, values) {
     );
   }
 
-  return data;
+  return {
+    measurement: data,
+    previousWaterLevel:
+      previousMeasurement?.water_level ?? null,
+    pot,
+  };
 }
 
 module.exports = {

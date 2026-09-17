@@ -1,5 +1,12 @@
 const mqtt = require("mqtt");
 
+const supabaseAdmin =
+  require("../config/supabaseAdmin");
+
+const {
+  sendPushNotification,
+} = require("./push.services");
+
 const {
   createMeasurementSnapshot,
 } = require("./measurements.services");
@@ -145,11 +152,14 @@ async function processMqttMessage(receivedTopic, message) {
   // -----------------------------
   // 5. Enregistrement PostgreSQL
   // -----------------------------
-  const measurement =
-    await createMeasurementSnapshot(
-      payload.device_id,
-      measurementValues
-    );
+  const {
+    measurement,
+    previousWaterLevel,
+    pot,
+  } = await createMeasurementSnapshot(
+    payload.device_id,
+    measurementValues
+  );
 
 
   console.log(
@@ -170,6 +180,95 @@ async function processMqttMessage(receivedTopic, message) {
     water_level:
       measurement.water_level,
   });
+  if (sensorType === "float_sensor") {
+    console.log(
+      "EAU :",
+      previousWaterLevel,
+      "→",
+      measurement.water_level
+    );
+
+    console.log(
+      "POT :",
+      pot.id,
+      pot.name
+    );
+  }
+
+  if (
+    sensorType === "float_sensor" &&
+    previousWaterLevel === true &&
+    measurement.water_level === false
+  ) {
+    console.log(
+      "EAU : réservoir devenu insuffisant"
+    );
+
+    const {
+      data: potOwner,
+      error: potOwnerError,
+    } = await supabaseAdmin
+      .from("pots")
+      .select("user_id, name")
+      .eq("id", pot.id)
+      .single();
+
+    if (potOwnerError || !potOwner?.user_id) {
+      console.error(
+        "PUSH : propriétaire du pot introuvable"
+      );
+      return;
+    }
+
+    const {
+      data: subscriptions,
+      error: subscriptionsError,
+    } = await supabaseAdmin
+      .from("push_subscriptions")
+      .select("endpoint, p256dh, auth")
+      .eq("user_id", potOwner.user_id);
+
+    if (subscriptionsError) {
+      console.error(
+        "PUSH : impossible de récupérer les abonnements :",
+        subscriptionsError.message
+      );
+      return;
+    }
+
+    for (const subscription of subscriptions || []) {
+      try {
+        await sendPushNotification(
+          {
+            endpoint:
+              subscription.endpoint,
+
+            keys: {
+              p256dh:
+                subscription.p256dh,
+              auth:
+                subscription.auth,
+            },
+          },
+          {
+            title:
+              "💧 Réservoir insuffisant",
+
+            body:
+              "Remplissez le réservoir de votre POCO pour permettre l'arrosage.",
+
+            url:
+              `/dashboard/${pot.id}`,
+          }
+        );
+      } catch (error) {
+        console.error(
+          "PUSH : échec d'envoi :",
+          error.message
+        );
+      }
+    }
+  }
 }
 
 let mqttClient = null;
