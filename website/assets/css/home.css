@@ -1006,7 +1006,7 @@ body {
 }
 
 .notification-button--active {
-  background: rgba(95, 152, 114, 0.15);
+  background: rgba(95, 152, 114, 0.35);
   border-color: var(--green);
   color: var(--green-dark);
 }
