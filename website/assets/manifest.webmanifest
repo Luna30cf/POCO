@@ -1,0 +1,23 @@
+{
+  "name": "POCO",
+  "short_name": "POCO",
+  "description": "Application de gestion du pot connecté POCO",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F7F4EA",
+  "theme_color": "#5F9872",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+        "src": "/images/poco-icon-192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+    },
+    {
+        "src": "/images/poco-icon-512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+    }
+  ]
+}

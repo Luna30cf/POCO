@@ -9,6 +9,9 @@
     content="width=device-width, initial-scale=1.0"
   >
 
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#5F9872">
+
   <title>POCO</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -157,6 +160,24 @@
 
 
   <script src="/pages/dashboard.js"></script>
+
+    <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/service-worker.js")
+          .then(() => {
+            console.log("Service Worker POCO enregistré");
+          })
+          .catch((error) => {
+            console.error(
+              "Erreur Service Worker POCO :",
+              error
+            );
+          });
+      });
+    }
+  </script>
 
 </body>
 
