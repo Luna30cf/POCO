@@ -2,7 +2,6 @@ const express = require("express");
 
 const {
   subscribePushController,
-  testPushController,
 } = require("../controller/push.controller");
 
 const {
@@ -16,12 +15,6 @@ router.post(
   "/subscribe",
   authenticateUser,
   subscribePushController,
-);
-
-router.post(
-  "/test",
-  authenticateUser,
-  testPushController
 );
 
 
