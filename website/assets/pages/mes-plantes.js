@@ -30,6 +30,15 @@ const logoutButton =
     "logout-button"
   );
 
+const enableNotificationsButton =
+  document.getElementById(
+    "enable-notifications-button"
+  );
+
+const notificationStatus =
+  document.getElementById(
+    "notification-status"
+  );
 
 // ======================================================
 // MODALE WI-FI
@@ -670,6 +679,128 @@ sendWifiButton.addEventListener(
   }
 );
 
+
+// ======================================================
+// NOTIFICATIONS PUSH
+// ======================================================
+
+function urlBase64ToUint8Array(base64String) {
+
+  const padding =
+    "=".repeat(
+      (4 - base64String.length % 4) % 4
+    );
+
+  const base64 =
+    (base64String + padding)
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+
+  const rawData =
+    window.atob(base64);
+
+  return Uint8Array.from(
+    [...rawData].map(
+      char => char.charCodeAt(0)
+    )
+  );
+}
+
+
+enableNotificationsButton.addEventListener(
+  "click",
+  async () => {
+
+    try {
+
+      if (
+        !("serviceWorker" in navigator) ||
+        !("PushManager" in window)
+      ) {
+
+        notificationStatus.textContent =
+          "Les notifications Push ne sont pas disponibles sur cet appareil.";
+
+        return;
+      }
+
+
+      const permission =
+        await Notification.requestPermission();
+
+
+      if (permission !== "granted") {
+
+        notificationStatus.textContent =
+          "Les notifications n'ont pas été autorisées.";
+
+        return;
+      }
+
+
+      const registration =
+        await navigator.serviceWorker.ready;
+
+
+      const existingSubscription =
+        await registration.pushManager
+          .getSubscription();
+
+
+      if (existingSubscription) {
+
+        console.log(
+          "Abonnement Push déjà existant :",
+          existingSubscription
+        );
+
+        notificationStatus.textContent =
+          "Notifications déjà activées ✓";
+
+        return;
+      }
+
+
+      const VAPID_PUBLIC_KEY =
+        "BDTPUnUAbd3ZV7_EclUFkAU2geep1GBNQC8KJJcIjsfmqylK_qurEOq9NvUR4YUr2EQPoLZtZm7RRTUWpZQ-wnI";
+
+
+      const subscription =
+        await registration.pushManager
+          .subscribe({
+            userVisibleOnly: true,
+
+            applicationServerKey:
+              urlBase64ToUint8Array(
+                VAPID_PUBLIC_KEY
+              ),
+          });
+
+
+      console.log(
+        "Abonnement Push POCO :",
+        subscription.toJSON()
+      );
+
+
+      notificationStatus.textContent =
+        "Notifications activées ✓";
+
+    }
+    catch (error) {
+
+      console.error(
+        "Erreur activation notifications :",
+        error
+      );
+
+
+      notificationStatus.textContent =
+        "Impossible d'activer les notifications.";
+
+    }
+  }
+);
 
 // ======================================================
 // DÉCONNEXION

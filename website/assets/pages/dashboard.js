@@ -958,7 +958,7 @@ async function loadDashboard() {
 
 
           waterButton.textContent =
-            "Arrosage envoyé ✓";
+            "Arrosage envoyé";
 
 
           setTimeout(() => {
