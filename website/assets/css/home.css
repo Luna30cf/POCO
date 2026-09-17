@@ -221,6 +221,19 @@ body {
     background 0.2s ease;
 }
 
+.logout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.logout-button__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 
 #logout-button:hover {
   transform:
@@ -231,14 +244,6 @@ body {
 }
 
 
-#logout-button img {
-  display: none;
-}
-
-
-#logout-button::after {
-  content: "Se déconnecter";
-}
 
 /* ======================================================
    PAGE
@@ -1022,14 +1027,27 @@ body {
 
 
   #logout-button {
-    right:
-      12px;
+    top: 14px;
+    right: 12px;
 
-    width:
-      40px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
 
-    height:
-      40px;
+    padding: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logout-button__text {
+    display: none;
+  }
+
+  .logout-button__icon {
+    width: 20px;
+    height: 20px;
   }
 
 

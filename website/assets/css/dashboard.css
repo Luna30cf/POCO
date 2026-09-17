@@ -143,6 +143,19 @@ body > h2 {
     rgba(255, 255, 255, 0.9);
 }
 
+.logout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.logout-button__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
 
 /* ======================================================
    BLUETOOTH
@@ -1165,14 +1178,30 @@ body > h2 {
 
 
   #logout-button {
-    position: static;
+    position: absolute;
 
-    display: block;
+    top: 14px;
+    right: 12px;
 
-    margin:
-      12px
-      auto
-      0;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+
+    padding: 0;
+    margin: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logout-button__text {
+    display: none;
+  }
+
+  .logout-button__icon {
+    width: 20px;
+    height: 20px;
   }
 
 
