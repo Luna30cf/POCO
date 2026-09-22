@@ -79,6 +79,8 @@
         potId
         ) {
 
+        
+
         // 1. Récupérer la plante et ses données Perenual
         const { data: plant, error: plantError } =
             await supabase
@@ -141,8 +143,8 @@
             )
             .order(
             "measured_at",
-            { ascending: true }
-            );
+            { ascending: false }
+            ).limit(1000);
 
 
         if (measurementError) {
